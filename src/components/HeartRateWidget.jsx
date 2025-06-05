@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useHeartRate } from '../contexts/HeartRateContext';
+import { useHeartRate } from '../context/HeartRateContext';
 
 const { width } = Dimensions.get('window');
 
-export default function HeartRateWidget({ compact = false }) {
+export  const HeartRateWidget = ({ compact = false }) => {
   const {
     currentBPM,
     anxietyLevel,

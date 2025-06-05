@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
-import colors from '../styles/colors';
+import colors from '../assets/styles/colors';
 
 export default function FloatingProfileButton() {
   const navigation = useNavigation();

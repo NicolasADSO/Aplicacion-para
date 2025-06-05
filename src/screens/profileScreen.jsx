@@ -9,27 +9,28 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
-import colors from '../styles/colors';
+import { BlurView } from 'expo-blur';
+import colors from '../assets/styles/colors';
 
 const { width } = Dimensions.get('window');
 
 export default function ProfileScreen({ navigation }) {
   return (
     <LinearGradient colors={['#141E30', '#243B55']} style={styles.container}>
-      {/* 🧑 Avatar + saludo */}
+      {/* 👤 Header con avatar */}
       <View style={styles.profileHeader}>
         <Image
           source={{ uri: 'https://via.placeholder.com/150' }}
           style={styles.avatar}
         />
         <Text style={styles.username}>Hola, Usuario 👋</Text>
-        <Text style={styles.subtitle}>Aquí están tus estadísticas</Text>
+        <Text style={styles.subtitle}>Tus estadísticas de bienestar</Text>
       </View>
 
-      {/* 📊 Estadísticas */}
-      <View style={styles.statsCard}>
+      {/* 📊 Stats con fondo difuminado */}
+      <BlurView intensity={40} tint="light" style={styles.statsCard}>
         <View style={styles.statItem}>
-          <MaterialIcons name="check-circle" size={26} color="#56CCF2" />
+          <MaterialIcons name="check-circle" size={28} color="#56CCF2" />
           <View style={styles.statTextWrapper}>
             <Text style={styles.statTitle}>Sesiones completadas</Text>
             <Text style={styles.statValue}>10</Text>
@@ -37,13 +38,13 @@ export default function ProfileScreen({ navigation }) {
         </View>
 
         <View style={styles.statItem}>
-          <MaterialIcons name="self-improvement" size={26} color="#56CCF2" />
+          <MaterialIcons name="self-improvement" size={28} color="#56CCF2" />
           <View style={styles.statTextWrapper}>
             <Text style={styles.statTitle}>Actividad favorita</Text>
             <Text style={styles.statValue}>Respiración</Text>
           </View>
         </View>
-      </View>
+      </BlurView>
 
       {/* 🚪 Botón cerrar sesión */}
       <TouchableOpacity
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
   },
   profileHeader: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 40,
   },
   avatar: {
     width: 120,
@@ -74,10 +75,10 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     borderWidth: 4,
     borderColor: '#56CCF2',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   username: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#fff',
   },
@@ -87,39 +88,35 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   statsCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    width: width - 40,
     borderRadius: 20,
     padding: 24,
-    width: width - 40,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    marginBottom: 40,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    marginBottom: 30,
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 22,
   },
   statTextWrapper: {
-    marginLeft: 12,
+    marginLeft: 14,
   },
   statTitle: {
-    color: '#ccc',
     fontSize: 14,
+    color: '#ddd',
   },
   statValue: {
     fontSize: 20,
-    color: '#fff',
     fontWeight: 'bold',
+    color: '#fff',
   },
   logoutButton: {
     flexDirection: 'row',
     backgroundColor: '#56CCF2',
     paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 12,
+    paddingHorizontal: 28,
+    borderRadius: 30,
     alignItems: 'center',
     gap: 10,
   },

@@ -9,9 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import colors from '../styles/colors';
-import FloatingProfileButton from '../components/FloatingProfileButton';
+
 
 const { width } = Dimensions.get('window');
 
@@ -38,18 +36,16 @@ const books = [
 
 export default function LibraryScreen() {
   const renderItem = ({ item }) => (
-    <View style={styles.cardContainer}>
-      <Image source={{ uri: item.imageUrl }} style={styles.imageBg} />
-      <BlurView intensity={50} tint="dark" style={styles.blurOverlay}>
-        <View style={styles.cardContent}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.author}>por {item.author}</Text>
-          <Text style={styles.description}>{item.description}</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Ver más</Text>
-          </TouchableOpacity>
-        </View>
-      </BlurView>
+    <View style={styles.card}>
+      <Image source={{ uri: item.imageUrl }} style={styles.bookImage} />
+      <View style={styles.info}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.author}>por {item.author}</Text>
+        <Text style={styles.description}>{item.description}</Text>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Ver más</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -63,7 +59,6 @@ export default function LibraryScreen() {
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
       />
-      <FloatingProfileButton />
     </LinearGradient>
   );
 }
@@ -84,39 +79,40 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 80,
   },
-  cardContainer: {
-    marginBottom: 24,
-    width: width - 32,
-    height: 160,
-    alignSelf: 'center',
-    borderRadius: 20,
+  card: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff22',
+    borderRadius: 16,
     overflow: 'hidden',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 6 },
+    shadowRadius: 6,
+    elevation: 8,
   },
-  imageBg: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
+  bookImage: {
+    width: 100,
+    height: 140,
     resizeMode: 'cover',
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
   },
-  blurOverlay: {
+  info: {
     flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-  cardContent: {
-    flex: 1,
+    padding: 16,
     justifyContent: 'space-between',
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
+    marginBottom: 4,
   },
   author: {
     fontSize: 14,
+    color: '#ddd',
     fontStyle: 'italic',
-    color: '#ccc',
   },
   description: {
     fontSize: 14,
@@ -124,16 +120,15 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   button: {
-    marginTop: 12,
-    alignSelf: 'flex-start',
+    marginTop: 10,
     backgroundColor: '#56CCF2',
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 10,
+    alignSelf: 'flex-start',
   },
   buttonText: {
     color: '#fff',
-    fontSize: 14,
     fontWeight: '600',
   },
 });

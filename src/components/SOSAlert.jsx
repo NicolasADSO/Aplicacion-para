@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useHeartRate } from '../contexts/HeartRateContext';
+import { useHeartRate } from '../../contexts/HeartRateContext';
 
 const { width, height } = Dimensions.get('window');
 

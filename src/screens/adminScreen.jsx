@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import colors from '../styles/colors'; // Asegúrate de tener colores más modernos o usa los actuales
+import colors from '../assets/styles/colors'; // Asegúrate de tener colores más modernos o usa los actuales
 
 export default function AdminScreen({ navigation }) {
   const [historias, setHistorias] = useState([]);

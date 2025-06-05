@@ -12,7 +12,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Audio } from 'expo-audio';
+import { useAudioPlayer } from 'expo-audio';
 import FloatingProfileButton from '../components/FloatingProfileButton';
 
 const yogaPoses = [
@@ -43,15 +43,15 @@ export default function YogaExerciseScreen() {
   const [timer, setTimer] = useState(30);
   const [active, setActive] = useState(true);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const soundRef = useRef(null);
+
+
+  const dingPlayer = useAudioPlayer(require('../assets/sounds/ding.mp3'));
+  
 
   useFocusEffect(
     React.useCallback(() => {
       setActive(true);
-      return () => {
-        setActive(false);
-        if (soundRef.current) soundRef.current.unloadAsync();
-      };
+      return () => setActive(false);
     }, [])
   );
 
@@ -59,6 +59,7 @@ export default function YogaExerciseScreen() {
     fadeIn();
 
     if (!active) return;
+
     const interval = setInterval(() => {
       setTimer((prev) => {
         if (prev === 1) {
@@ -68,11 +69,13 @@ export default function YogaExerciseScreen() {
         return prev - 1;
       });
     }, 1000);
+
     return () => clearInterval(interval);
   }, [active, currentPose]);
 
-  const nextPose = async () => {
-    await reproducirSonido();
+  const nextPose = () => {
+    dingPlayer.play();
+
     fadeOut(() => {
       setCurrentPose((prev) => (prev + 1) % yogaPoses.length);
       setTimer(30);
@@ -97,23 +100,6 @@ export default function YogaExerciseScreen() {
       easing: Easing.in(Easing.ease),
       useNativeDriver: true,
     }).start(callback);
-  };
-
-  const reproducirSonido = async () => {
-    try {
-      const { sound } = await Audio.Sound.createAsync(
-        require('../assets/sounds/ding.mp3'),
-        { shouldPlay: true }
-      );
-      soundRef.current = sound;
-
-      
-      setTimeout(() => {
-        sound.stopAsync();
-      }, 2000);
-    } catch (err) {
-      console.warn('Error al reproducir el sonido:', err);
-    }
   };
 
   const progreso = ((currentPose + 1) / yogaPoses.length) * 100;
