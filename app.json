@@ -10,15 +10,19 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "permissions": ["CAMERA"]
+        
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "NSCameraUsageDescription": "Esta app necesita acceso a la cámara para detectar el pulso"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "permissions": ["CAMERA"]
       }
     },
     "web": {

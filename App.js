@@ -16,6 +16,7 @@ import RespiracionScreen from "./src/screens/respiracionScreen";
 import ProfileScreen from "./src/screens/profileScreen";
 import AdminScreen from "./src/screens/adminScreen";
 import { HeartRateProvider } from "./src/context/HeartRateContext";
+import { PulseCameraScreen } from "./src/screens/pulseCameraScreen";
 
 
 const Stack = createStackNavigator();
@@ -30,8 +31,8 @@ export default function App(){
           <Stack.Screen name="MainTabs" component={MainTabs}/>
           <Stack.Screen name="AdminScreen" component={AdminScreen}/>
           <Stack.Screen name="Respiracion" component={RespiracionScreen}/>
+          <Stack.Screen name="Pulso" component={PulseCameraScreen}/>
           <Stack.Screen name="Perfil" component={ProfileScreen}/>
-
         </Stack.Navigator>
       </NavigationContainer>
     </HeartRateProvider>
