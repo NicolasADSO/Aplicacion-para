@@ -15,8 +15,10 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  TouchableHighlight
+  TouchableHighlight,
 } from "react-native";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
@@ -33,7 +35,7 @@ import { saveRole } from "../utils/session";
  * Screen de login
  */
 
-export const LoginScreen = ({navigation}) => {
+export const LoginScreen = ({ navigation }) => {
   // Estados para manejar los datos del formulario
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,10 +43,12 @@ export const LoginScreen = ({navigation}) => {
   // Funcion para manejar el LOGIN
   const handleLogin = async () => {
     try {
-      const role = await loginUser(email.toLowerCase(), password.toLowerCase());
-      
+    const role = await loginUser(email.toLowerCase(), password.toLowerCase());
+
       try{
         await saveRole(role);
+        await AsyncStorage.setItem('usuario', JSON.stringify({email}))
+        console.log(`Datos guardados del login: ${email}`)
 
       }catch(err){
         console.error("Error al guardar el rol:", err);

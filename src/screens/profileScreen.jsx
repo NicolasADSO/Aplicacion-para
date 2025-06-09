@@ -11,10 +11,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import colors from '../assets/styles/colors';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width } = Dimensions.get('window');
 
 export default function ProfileScreen({ navigation }) {
+
+  const userName = AsyncStorage.getItem('usuario')
   return (
     <LinearGradient colors={['#141E30', '#243B55']} style={styles.container}>
       {/* 👤 Header con avatar */}
@@ -23,7 +25,7 @@ export default function ProfileScreen({ navigation }) {
           source={{ uri: 'https://via.placeholder.com/150' }}
           style={styles.avatar}
         />
-        <Text style={styles.username}>Hola, Usuario 👋</Text>
+        <Text style={styles.username}>Hola, {} 👋</Text>
         <Text style={styles.subtitle}>Tus estadísticas de bienestar</Text>
       </View>
 

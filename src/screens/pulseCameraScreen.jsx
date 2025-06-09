@@ -8,6 +8,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
  * Imports personalizados.
  */
 
+
 import { useHeartRate } from '../context/HeartRateContext';
 
 export const PulseCameraScreen = () => {
@@ -21,7 +22,7 @@ export const PulseCameraScreen = () => {
   if (!permission) return <View />;
   if (!permission.granted) {
     return (
-      <View style={styles.container}>
+      <View style={styles.container}> 
         <Text style={styles.message}>Necesitamos permiso para acceder a la cámara</Text>
         <TouchableOpacity onPress={requestPermission} style={styles.button}>
           <Text style={styles.buttonText}>Dar permiso</Text>
@@ -47,7 +48,7 @@ export const PulseCameraScreen = () => {
   };
 
     const calculateBPM = () => {
-    const peaks = Math.floor(frames.length / 2);
+    const  peaks = Math.floor(frames.length / 2);
     const bpmValue = Math.round((peaks / 10) * 60);
     setBpm(bpmValue);
 
