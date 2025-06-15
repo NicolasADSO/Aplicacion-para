@@ -33,11 +33,17 @@ export const RegisterScreen = ({ navigation }) => {
 
     try {
       await registerUser(userName, email, password);
-      Alert.alert("Registro exitoso", "Revisa tu correo para verificar tu cuenta.");
+      Alert.alert(
+        "Registro exitoso",
+        "Revisa tu correo para verificar tu cuenta."
+      );
       navigation.navigate("Login");
     } catch (error) {
       console.error("Error al registrar usuario:", error);
-      Alert.alert("Error", error.message || "No se pudo completar el registro.");
+      Alert.alert(
+        "Error",
+        error.message || "No se pudo completar el registro."
+      );
     }
   };
 
@@ -49,8 +55,17 @@ export const RegisterScreen = ({ navigation }) => {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.container}
         >
-          <Animatable.View style={styles.card} animation="fadeInUp" duration={1000}>
-            <MaterialIcons name="person-add" size={44} color="#fff" style={{ marginBottom: 15 }} />
+          <Animatable.View
+            style={styles.card}
+            animation="fadeInUp"
+            duration={1000}
+          >
+            <MaterialIcons
+              name="person-add"
+              size={44}
+              color="#fff"
+              style={{ marginBottom: 15 }}
+            />
             <Text style={styles.title}>Crea tu cuenta</Text>
 
             <TextInput
@@ -73,14 +88,17 @@ export const RegisterScreen = ({ navigation }) => {
 
             <View style={styles.passwordContainer}>
               <TextInput
-                style={[styles.input, { flex: 1, marginBottom: 0 }]}
+                style={styles.passwordInput}
                 placeholder="Escribe tu contraseña"
                 placeholderTextColor="#bbb"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
               />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}
+              >
                 <MaterialIcons
                   name={showPassword ? "visibility" : "visibility-off"}
                   size={22}
@@ -130,6 +148,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: "#ffffff33",
   },
+
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -139,10 +158,24 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 0.5,
     borderColor: "#ffffff33",
+    paddingHorizontal: 10,
     marginBottom: 15,
+  },
+
+  passwordInput: {
+    flex: 1,
+    color: "#fff",
+    fontSize: 16,
+    backgroundColor: "transparent", // sin fondo duplicado
     paddingHorizontal: 10,
   },
-  eyeIcon: { padding: 5 },
+
+  eyeIcon: {
+    padding: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: "auto", // lo empuja al borde derecho
+  },
   button: {
     backgroundColor: colors.secondary,
     paddingVertical: 14,
