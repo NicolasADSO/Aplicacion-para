@@ -1,7 +1,3 @@
-/**
- * Librerias para el funcionamiento del componente
- */
-
 import React, { useState } from "react";
 import {
   View,
@@ -18,93 +14,49 @@ import {
   TouchableHighlight,
 } from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-/**
- * Import de assets o servicios necesarios
- */
 import backgroundImage from "../assets/images/fondo-login.jpg";
 import { loginUser } from "../services/authService";
-import { saveRole } from "../utils/session";
-
-/**
- *
- * Screen de login
- */
+import { saveUserSession } from "../utils/session";
 
 export const LoginScreen = ({ navigation }) => {
-  // Estados para manejar los datos del formulario
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Funcion para manejar el LOGIN
   const handleLogin = async () => {
     try {
-    const role = await loginUser(email.toLowerCase(), password.toLowerCase());
+      const userData = await loginUser(email, password);
+      await saveUserSession(userData);
 
-      try{
-        await saveRole(role);
-        await AsyncStorage.setItem('usuario', JSON.stringify({email}))
-        console.log(`Datos guardados del login: ${email}`)
-
-      }catch(err){
-        console.error("Error al guardar el rol:", err);
-      }
-      if (role === "administrador") {
-        navigation.replace("AdminScreen");
-      } else {
-        navigation.replace("MainTabs");
-      }
+      navigation.replace("MainTabs");
     } catch (error) {
-      alert(`Error al iniciar sesión: ${error} `, );
+      alert("Error al iniciar sesión: " + error.message);
     }
   };
-  // To do function to handle register
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ImageBackground
-        source={backgroundImage}
-        resizeMode="cover"
-        style={styles.background}
-      >
+      <ImageBackground source={backgroundImage} resizeMode="cover" style={styles.background}>
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
           <StatusBar barStyle="dark-content" />
 
-          <Animatable.Text
-            animation="fadeInDown"
-            delay={250}
-            style={styles.header}
-          >
+          <Animatable.Text animation="fadeInDown" delay={250} style={styles.header}>
             ¡Bienvenido de nuevo!
           </Animatable.Text>
 
-          <Animatable.Text
-            animation="fadeInDown"
-            delay={500}
-            style={styles.subtext}
-          >
-            Te estabamos esperando ✨
+          <Animatable.Text animation="fadeInDown" delay={500} style={styles.subtext}>
+            Te estábamos esperando ✨
           </Animatable.Text>
 
-          <Animatable.View
-            animation="fadeInDown"
-            delay={750}
-            style={styles.inputContainer}
-          >
-            <MaterialIcons
-              name="email"
-              size={20}
-              color="#1a1a1a"
-              style={styles.icon}
-            />
-
+          <Animatable.View animation="fadeInDown" delay={750} style={styles.inputContainer}>
+            <MaterialIcons name="email" size={20} color="#1a1a1a" style={styles.icon} />
             <TextInput
               placeholder="Correo electrónico"
               placeholderTextColor="#555"
@@ -112,65 +64,52 @@ export const LoginScreen = ({ navigation }) => {
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
+              autoCapitalize="none"
             />
           </Animatable.View>
 
-          <Animatable.View
-            animation="fadeInDown"
-            delay={800}
-            style={styles.inputContainer}
-          >
-            <MaterialIcons
-              name="lock"
-              size={20}
-              color="#1a1a1a"
-              style={styles.icon}
-            />
-
+          <Animatable.View animation="fadeInDown" delay={800} style={styles.inputContainer}>
+            <MaterialIcons name="lock" size={20} color="#1a1a1a" style={styles.icon} />
             <TextInput
               placeholder="Contraseña"
               placeholderTextColor="#555"
               style={styles.input}
               value={password}
               onChangeText={setPassword}
-              secureTextEntry
+              secureTextEntry={!showPassword}
             />
+            <TouchableOpacity onPress={() => setShowPassword(prev => !prev)}>
+              <MaterialIcons
+                name={showPassword ? "visibility" : "visibility-off"}
+                size={22}
+                color="#1a1a1a"
+              />
+            </TouchableOpacity>
           </Animatable.View>
 
-          <Animatable.View
-            animation="fadeInDown"
-            delay={850}
-            style={styles.loginContainer}
-          >
+          <Animatable.View animation="fadeInDown" delay={850} style={styles.loginContainer}>
             <TouchableHighlight onPress={handleLogin} style={styles.loginButton}>
-              <Text style={styles.registerText}> Iniciar Sesion </Text>
+              <Text style={styles.registerText}> Iniciar Sesión </Text>
             </TouchableHighlight>
           </Animatable.View>
 
-          <Animatable.View
-            animation="fadeInUp"
-            delay={850}
-            style={styles.registerContainer}
-          >
-            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.button} >
+          <Animatable.View animation="fadeInUp" delay={850} style={styles.registerContainer}>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.button}>
               <Text style={styles.registerText}>
-                ¿No tienes una cuenta <Text style={styles.link}> Registrate </Text>
+                ¿No tienes una cuenta? <Text style={styles.link}>Regístrate</Text>
               </Text>
             </TouchableOpacity>
           </Animatable.View>
 
-          <Animatable.Text
-            animation="fadeInUp"
-            delay={900}
-            style={styles.registerFooter}
-          >
-            Te Acompañamos en cada respiro 🧘
+          <Animatable.Text animation="fadeInUp" delay={900} style={styles.footer}>
+            Te acompañamos en cada respiro 🧘
           </Animatable.Text>
         </KeyboardAvoidingView>
       </ImageBackground>
     </TouchableWithoutFeedback>
   );
 };
+
 
 const styles = StyleSheet.create({
   background: {
