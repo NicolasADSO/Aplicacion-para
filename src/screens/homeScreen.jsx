@@ -13,9 +13,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-/**
- * Imports personalizados.
- */
 import { HeartRateWidget } from "../components/HeartRateWidget";
 import { FeatureCard } from "../components/featureCard";
 import { useHeartRate } from "../context/HeartRateContext";
@@ -50,6 +47,13 @@ const features = [
     color: "#FDCB6E",
     description: "Recursos y guías",
   },
+  {
+    title: "Juegos",
+    icon: "extension",
+    screen: "ListaDeJuegos",
+    color: "#9C27B0",
+    description: "Entrenamiento mental",
+  },
 ];
 
 export const HomeScreen = ({ navigation }) => {
@@ -73,41 +77,29 @@ export const HomeScreen = ({ navigation }) => {
   const theme = getCurrentTheme();
 
   useEffect(() => {
-    initializeData();
-  }, []);
-
-  const initializeData = async () => {
-    try {
-      // Cargar rol
+    const initializeData = async () => {
       const savedRole = await getRole();
       setRole(savedRole || "");
 
-      // Cargar nombre de usuario
       const userData = await AsyncStorage.getItem('usuario');
       if (userData) {
         const user = JSON.parse(userData);
         setUserName(user.nombre || "Usuario");
       }
-    } catch (error) {
-      console.error('Error cargando datos:', error);
-    }
-  };
+    };
+
+    initializeData();
+  }, []);
 
   const getPersonalizedGreeting = () => {
     const hour = new Date().getHours();
-    let timeGreeting = "";
-    
-    if (hour < 12) timeGreeting = "Buenos días";
-    else if (hour < 18) timeGreeting = "Buenas tardes";
-    else timeGreeting = "Buenas noches";
-    
-    return `${timeGreeting}, ${userName}`;
+    if (hour < 12) return `Buenos días, ${userName}`;
+    if (hour < 18) return `Buenas tardes, ${userName}`;
+    return `Buenas noches, ${userName}`;
   };
 
   const getMotivationalMessage = () => {
-    if (!isConnected) {
-      return "¿Listo para comenzar tu bienestar hoy?";
-    }
+    if (!isConnected) return "¿Listo para comenzar tu bienestar hoy?";
 
     const messages = {
       CALM: "¡Perfecto! Mantén este estado de calma 🧘‍♀️",
@@ -120,23 +112,19 @@ export const HomeScreen = ({ navigation }) => {
     return messages[anxietyLevel] || "¿Cómo te sientes hoy?";
   };
 
-  const handleQuickAction = (feature) => {
-    navigation.navigate(feature.screen);
-  };
-
   const handleLogout = () => {
     Alert.alert(
       "Cerrar Sesión",
       "¿Estás seguro de que quieres cerrar sesión?",
       [
         { text: "Cancelar", style: "cancel" },
-        { 
-          text: "Cerrar Sesión", 
+        {
+          text: "Cerrar Sesión",
           style: "destructive",
           onPress: async () => {
-            await AsyncStorage.removeItem('usuario');
+            await AsyncStorage.removeItem("usuario");
             navigation.replace("Login");
-          }
+          },
         },
       ]
     );
@@ -149,23 +137,16 @@ export const HomeScreen = ({ navigation }) => {
   return (
     <LinearGradient colors={dynamicGradient} style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-      
-      <ScrollView 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {/* Header con Heart Rate Widget */}
+
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.headerSection}>
           <HeartRateWidget />
         </View>
 
-        {/* Greeting Section */}
         <View style={styles.greetingSection}>
           <Text style={styles.greeting}>{getPersonalizedGreeting()}</Text>
-          <Text style={styles.motivationalMessage}>
-            {getMotivationalMessage()}
-          </Text>
-          
+          <Text style={styles.motivationalMessage}>{getMotivationalMessage()}</Text>
+
           {isConnected && (
             <View style={[styles.statusIndicator, { borderColor: theme.color }]}>
               <Text style={[styles.statusText, { color: theme.color }]}>
@@ -180,80 +161,38 @@ export const HomeScreen = ({ navigation }) => {
           )}
         </View>
 
-        {/* Stats Dashboard */}
         <View style={styles.statsSection}>
           <Text style={styles.sectionTitle}>📊 Tu progreso hoy</Text>
           <View style={styles.statsGrid}>
-            <View style={styles.statCard}>
-              <MaterialIcons name="fitness-center" size={24} color="#6A82FB" />
-              <Text style={styles.statNumber}>{dailyStats.exercisesCompleted}</Text>
-              <Text style={styles.statLabel}>Ejercicios</Text>
-            </View>
-            <View style={styles.statCard}>
-              <MaterialIcons name="air" size={24} color="#56CCF2" />
-              <Text style={styles.statNumber}>{dailyStats.breathingSessions}</Text>
-              <Text style={styles.statLabel}>Respiración</Text>
-            </View>
-            <View style={styles.statCard}>
-              <MaterialIcons name="schedule" size={24} color="#43E97B" />
-              <Text style={styles.statNumber}>{dailyStats.totalMinutes}</Text>
-              <Text style={styles.statLabel}>Minutos</Text>
-            </View>
-            <View style={styles.statCard}>
-              <MaterialIcons name="local-fire-department" size={24} color="#FF6B6B" />
-              <Text style={styles.statNumber}>{dailyStats.streak}</Text>
-              <Text style={styles.statLabel}>Racha</Text>
-            </View>
+            <Stat icon="fitness-center" label="Ejercicios" value={dailyStats.exercisesCompleted} color="#6A82FB" />
+            <Stat icon="air" label="Respiración" value={dailyStats.breathingSessions} color="#56CCF2" />
+            <Stat icon="schedule" label="Minutos" value={dailyStats.totalMinutes} color="#43E97B" />
+            <Stat icon="local-fire-department" label="Racha" value={dailyStats.streak} color="#FF6B6B" />
           </View>
         </View>
 
-        {/* Quick Actions */}
         <View style={styles.quickActionsSection}>
           <Text style={styles.sectionTitle}>⚡ Acciones rápidas</Text>
           <View style={styles.quickActionsGrid}>
             {features.slice(0, 2).map((feature) => (
-              <TouchableOpacity
-                key={feature.title}
-                style={styles.quickActionCard}
-                onPress={() => handleQuickAction(feature)}
-              >
-                <LinearGradient
-                  colors={[feature.color + '80', feature.color]}
-                  style={styles.quickActionGradient}
-                >
-                  <MaterialIcons name={feature.icon} size={28} color="#fff" />
-                  <Text style={styles.quickActionTitle}>{feature.title}</Text>
-                  <Text style={styles.quickActionDescription}>{feature.description}</Text>
-                </LinearGradient>
-              </TouchableOpacity>
+              <QuickAction key={feature.title} feature={feature} />
             ))}
           </View>
         </View>
 
-        {/* Recomendaciones */}
         {isConnected && getRecommendedActivities().length > 0 && (
           <View style={styles.recommendationsSection}>
-            <View style={[styles.recommendationCard, { borderLeftColor: theme.color }]}>
-              <Text style={styles.recommendationTitle}>
-                💡 Recomendado para ti
-              </Text>
-              <Text style={styles.recommendationText}>
-                Basado en tu nivel de ansiedad actual, te sugerimos:
-              </Text>
-              <View style={styles.recommendationTags}>
-                {getRecommendedActivities().map((activity, index) => (
-                  <View key={index} style={[styles.recommendationTag, { backgroundColor: theme.color + '30' }]}>
-                    <Text style={[styles.recommendationTagText, { color: theme.color }]}>
-                      {activity}
-                    </Text>
-                  </View>
-                ))}
-              </View>
+            <Text style={styles.sectionTitle}>💡 Recomendaciones para ti</Text>
+            <View style={styles.recommendationTags}>
+              {getRecommendedActivities().map((activity, index) => (
+                <View key={index} style={[styles.recommendationTag, { backgroundColor: theme.color + '30' }]}>
+                  <Text style={[styles.recommendationTagText, { color: theme.color }]}>{activity}</Text>
+                </View>
+              ))}
             </View>
           </View>
         )}
 
-        {/* All Features Grid */}
         <View style={styles.featuresSection}>
           <Text style={styles.sectionTitle}>🎯 Todas las herramientas</Text>
           <FlatList
@@ -268,66 +207,51 @@ export const HomeScreen = ({ navigation }) => {
           />
         </View>
 
-        {/* Bottom Actions */}
         <View style={styles.bottomSection}>
           {role === "administrador" && (
-            <TouchableOpacity
-              style={[styles.actionButton, styles.adminButton]}
-              onPress={() => navigation.navigate("AdminScreen")}
-            >
-              <MaterialIcons name="admin-panel-settings" size={22} color="#fff" />
-              <Text style={styles.actionButtonText}>Panel Admin</Text>
-            </TouchableOpacity>
+            <ActionButton text="Panel Admin" icon="admin-panel-settings" onPress={() => navigation.navigate("AdminScreen")} color="#9b59b6" />
           )}
-
-          <TouchableOpacity
-            style={[styles.actionButton, styles.profileButton]}
-            onPress={() => navigation.navigate("Perfil")}
-          >
-            <MaterialIcons name="person" size={22} color="#fff" />
-            <Text style={styles.actionButtonText}>Mi Perfil</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.actionButton, styles.logoutButton]}
-            onPress={handleLogout}
-          >
-            <MaterialIcons name="logout" size={22} color="#fff" />
-            <Text style={styles.actionButtonText}>Cerrar Sesión</Text>
-          </TouchableOpacity>
+          <ActionButton text="Mi Perfil" icon="person" onPress={() => navigation.navigate("Perfil")} color="#3498db" />
+          <ActionButton text="Cerrar Sesión" icon="logout" onPress={handleLogout} color="#e74c3c" />
         </View>
       </ScrollView>
     </LinearGradient>
   );
 };
 
+// Subcomponentes reutilizables
+const Stat = ({ icon, label, value, color }) => (
+  <View style={styles.statCard}>
+    <MaterialIcons name={icon} size={24} color={color} />
+    <Text style={styles.statNumber}>{value}</Text>
+    <Text style={styles.statLabel}>{label}</Text>
+  </View>
+);
+
+const QuickAction = ({ feature }) => (
+  <TouchableOpacity style={styles.quickActionCard}>
+    <LinearGradient colors={[feature.color + '80', feature.color]} style={styles.quickActionGradient}>
+      <MaterialIcons name={feature.icon} size={28} color="#fff" />
+      <Text style={styles.quickActionTitle}>{feature.title}</Text>
+      <Text style={styles.quickActionDescription}>{feature.description}</Text>
+    </LinearGradient>
+  </TouchableOpacity>
+);
+
+const ActionButton = ({ text, icon, onPress, color }) => (
+  <TouchableOpacity style={[styles.actionButton, { backgroundColor: color }]} onPress={onPress}>
+    <MaterialIcons name={icon} size={22} color="#fff" />
+    <Text style={styles.actionButtonText}>{text}</Text>
+  </TouchableOpacity>
+);
+
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1,
-  },
-  scrollContent: {
-    paddingTop: 50,
-    paddingBottom: 100,
-  },
-  headerSection: {
-    marginBottom: 10,
-  },
-  greetingSection: {
-    paddingHorizontal: 24,
-    marginBottom: 25,
-  },
-  greeting: {
-    fontSize: 28,
-    color: "#ffffff",
-    fontWeight: "700",
-    marginBottom: 8,
-  },
-  motivationalMessage: {
-    fontSize: 16,
-    color: "#f0f0f0",
-    lineHeight: 22,
-    marginBottom: 15,
-  },
+  container: { flex: 1 },
+  scrollContent: { paddingTop: 50, paddingBottom: 100 },
+  headerSection: { marginBottom: 10 },
+  greetingSection: { paddingHorizontal: 24, marginBottom: 25 },
+  greeting: { fontSize: 28, color: "#ffffff", fontWeight: "700", marginBottom: 8 },
+  motivationalMessage: { fontSize: 16, color: "#f0f0f0", lineHeight: 22, marginBottom: 15 },
   statusIndicator: {
     backgroundColor: "rgba(255,255,255,0.2)",
     borderWidth: 1,
@@ -339,29 +263,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  statusText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  bpmIndicator: {
-    fontSize: 12,
-    color: "#d0d0d0",
-    fontWeight: "500",
-  },
-  statsSection: {
-    paddingHorizontal: 24,
-    marginBottom: 25,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    color: "#ffffff",
-    fontWeight: "600",
-    marginBottom: 15,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+  statusText: { fontSize: 14, fontWeight: "600" },
+  bpmIndicator: { fontSize: 12, color: "#d0d0d0", fontWeight: "500" },
+  statsSection: { paddingHorizontal: 24, marginBottom: 25 },
+  sectionTitle: { fontSize: 18, color: "#ffffff", fontWeight: "600", marginBottom: 15 },
+  statsGrid: { flexDirection: 'row', justifyContent: 'space-between' },
   statCard: {
     backgroundColor: "rgba(255,255,255,0.15)",
     borderWidth: 1,
@@ -372,26 +278,10 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 3,
   },
-  statNumber: {
-    fontSize: 20,
-    color: "#ffffff",
-    fontWeight: "bold",
-    marginTop: 5,
-  },
-  statLabel: {
-    fontSize: 10,
-    color: "#e0e0e0",
-    marginTop: 2,
-    fontWeight: "500",
-  },
-  quickActionsSection: {
-    paddingHorizontal: 24,
-    marginBottom: 25,
-  },
-  quickActionsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+  statNumber: { fontSize: 20, color: "#ffffff", fontWeight: "bold", marginTop: 5 },
+  statLabel: { fontSize: 10, color: "#e0e0e0", marginTop: 2, fontWeight: "500" },
+  quickActionsSection: { paddingHorizontal: 24, marginBottom: 25 },
+  quickActionsGrid: { flexDirection: 'row', justifyContent: 'space-between' },
   quickActionCard: {
     flex: 1,
     marginHorizontal: 6,
@@ -406,46 +296,10 @@ const styles = StyleSheet.create({
     minHeight: 100,
     justifyContent: 'center',
   },
-  quickActionTitle: {
-    color: "#ffffff",
-    fontSize: 14,
-    fontWeight: "600",
-    marginTop: 8,
-  },
-  quickActionDescription: {
-    color: "#f0f0f0",
-    fontSize: 10,
-    textAlign: 'center',
-    marginTop: 4,
-  },
-  recommendationsSection: {
-    paddingHorizontal: 24,
-    marginBottom: 25,
-  },
-  recommendationCard: {
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.25)",
-    padding: 16,
-    borderRadius: 12,
-    borderLeftWidth: 4,
-  },
-  recommendationTitle: {
-    fontSize: 16,
-    color: "#ffffff",
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  recommendationText: {
-    fontSize: 14,
-    color: "#e8e8e8",
-    marginBottom: 12,
-    lineHeight: 18,
-  },
-  recommendationTags: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
+  quickActionTitle: { color: "#ffffff", fontSize: 14, fontWeight: "600", marginTop: 8 },
+  quickActionDescription: { color: "#f0f0f0", fontSize: 10, textAlign: 'center', marginTop: 4 },
+  recommendationsSection: { paddingHorizontal: 24, marginBottom: 25 },
+  recommendationTags: { flexDirection: 'row', flexWrap: 'wrap' },
   recommendationTag: {
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -455,37 +309,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.3)",
   },
-  recommendationTagText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  featuresSection: {
-    paddingHorizontal: 24,
-    marginBottom: 25,
-  },
-  featureRow: {
-    justifyContent: 'space-between',
-    marginBottom: 15,
-  },
-  bottomSection: {
-    paddingHorizontal: 24,
-    gap: 12,
-  },
+  recommendationTagText: { fontSize: 12, fontWeight: "500" },
+  featuresSection: { paddingHorizontal: 24, marginBottom: 25 },
+  featureRow: { justifyContent: 'space-between', marginBottom: 15 },
+  bottomSection: { paddingHorizontal: 24, gap: 12 },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 15,
     borderRadius: 12,
-  },
-  adminButton: {
-    backgroundColor: "#9b59b6",
-  },
-  profileButton: {
-    backgroundColor: "#3498db",
-  },
-  logoutButton: {
-    backgroundColor: "#e74c3c",
   },
   actionButtonText: {
     color: "#fff",
