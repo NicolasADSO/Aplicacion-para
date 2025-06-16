@@ -8,10 +8,12 @@ import {
   Animated,
   Easing,
   StatusBar,
+  Modal,
+  ScrollView
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons} from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
 import FloatingProfileButton from '../components/FloatingProfileButton';
 
@@ -43,10 +45,11 @@ export default function YogaExerciseScreen() {
   const [timer, setTimer] = useState(30);
   const [active, setActive] = useState(true);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [mostrarInfo, setMostrarInfo] = useState(true);
 
 
   const dingPlayer = useAudioPlayer(require('../assets/sounds/ding.mp3'));
-  
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -108,6 +111,34 @@ export default function YogaExerciseScreen() {
   return (
     <LinearGradient colors={['#0f2027', '#203a43', '#2c5364']} style={styles.container}>
       <StatusBar barStyle="light-content" />
+      {/* 🧘 MODAL INFORMATIVO */}
+      <Modal visible={mostrarInfo} animationType="slide" transparent>
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContent}>
+            <ScrollView>
+              <Text style={styles.modalTitle}>¿Cómo funciona esta sesión de yoga?</Text>
+              <Text style={styles.modalText}>
+                Esta sesión te guía por diferentes posturas de yoga que ayudan a mejorar tu flexibilidad, equilibrio y concentración.
+              </Text>
+              <Text style={styles.modalText}>
+                Cada postura se mantiene durante 30 segundos antes de pasar a la siguiente.
+              </Text>
+              <Text style={styles.modalText}>
+                Trata de mantener la postura lo mejor posible, respira profundamente y mantén tu atención en el presente.
+              </Text>
+              <TouchableOpacity onPress={() => setMostrarInfo(false)} style={styles.modalButton}>
+                <Text style={styles.modalButtonText}>¡Entendido! Comenzar</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 🔵 Botón de información */}
+      <TouchableOpacity style={styles.infoButton} onPress={() => setMostrarInfo(true)}>
+        <Ionicons name="information-circle-outline" size={28} color="#fff" />
+      </TouchableOpacity>
+
       <Text style={styles.title}>Sesión de Yoga</Text>
       <Text style={styles.subTitle}>Postura {currentPose + 1} de {yogaPoses.length}</Text>
 
@@ -210,4 +241,47 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontWeight: '600',
   },
+
+  // Estilos modal
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.85)",
+    justifyContent: "center",
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 20,
+    maxHeight: "80%",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: "#333",
+  },
+  modalButton: {
+    backgroundColor: "#3A6073",
+    marginTop: 20,
+    padding: 12,
+    borderRadius: 10,
+  },
+  modalButtonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+  },
+
+  infoButton: {
+    position: "absolute",
+    top: 40,
+    right: 20,
+    zIndex: 10,
+  },
 });
+

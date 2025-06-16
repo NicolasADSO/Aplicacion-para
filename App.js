@@ -18,6 +18,13 @@ import ProfileScreen from "./src/screens/profileScreen";
 import AdminScreen from "./src/screens/adminScreen";
 import { HeartRateProvider } from "./src/context/HeartRateContext";
 import { PulseCameraScreen } from "./src/screens/pulseCameraScreen";
+import { GameListScreen } from "./src/screens/GameListScreen";
+import { JuegoMemorama } from "./src/screens/Juegos/JuegoMemorama";
+import {  JuegoColorear } from "./src/screens/Juegos/JuegoColorear";
+import {   JuegoCírculo } from "./src/screens/Juegos/JuegoCírculo";
+import { PuzzleGameScreen } from "./src/screens/Juegos/PuzzleGameScreen";
+import { iniciojuego } from "./src/screens/Juegos/iniciojuego";
+
 
 const Stack = createStackNavigator();
 
@@ -70,8 +77,15 @@ export default function App() {
           <Stack.Screen name="MainTabs" component={MainTabs} />
           <Stack.Screen name="AdminScreen" component={AdminScreen} />
           <Stack.Screen name="Respiracion" component={RespiracionScreen} />
+          <Stack.Screen name="GameListScreen" component={GameListScreen} />
           <Stack.Screen name="Pulso" component={PulseCameraScreen} />
           <Stack.Screen name="Perfil" component={ProfileScreen} />
+          <Stack.Screen name="Rompecabezas" component={PuzzleGameScreen} />
+          <Stack.Screen name="ListaDeJuegos" component={GameListScreen} />
+          <Stack.Screen name="JuegoMemorama" component={JuegoMemorama} />
+          <Stack.Screen name="JuegoColorear" component={JuegoColorear} />
+          <Stack.Screen name="JuegoCírculo" component={JuegoCírculo} />
+          <Stack.Screen name="InicioJuego" component={iniciojuego} />
         </Stack.Navigator>
       </NavigationContainer>
     </HeartRateProvider>

@@ -15,14 +15,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { HeartRateWidget } from "../components/HeartRateWidget";
 import { FeatureCard } from "../components/featureCard";
 import { StatsSection } from "../components/stastSection";
-import { QuickActionCard } from "../components/quickActionCard"
+import { QuickActionCard } from "../components/quickActionCard";
 import { ActionButton } from "../components/actionButton";
 import { RecommendationBox } from "../components/recommendationBox";
 import { useHeartRate } from "../context/HeartRateContext";
 import { getRole } from "../utils/session";
 import features from "../data/features";
 import { GreetingSection } from "../components/greetingSection";
-
 
 export const HomeScreen = ({ navigation }) => {
   const [role, setRole] = useState("");
@@ -33,7 +32,6 @@ export const HomeScreen = ({ navigation }) => {
     totalMinutes: 32,
     streak: 1,
   });
-
 
   const {
     getCurrentTheme,
@@ -53,6 +51,8 @@ export const HomeScreen = ({ navigation }) => {
       if (raw) {
         const user = JSON.parse(raw);
         setUserName(user.nombre || "Usuario");
+      } else {
+        console.warn("⚠️ No se encontró el nombre del usuario");
       }
     })();
   }, []);
@@ -106,7 +106,7 @@ export const HomeScreen = ({ navigation }) => {
         />
 
         {/* Progreso diario */}
-       <StatsSection stats={dailyStats} />
+        <StatsSection stats={dailyStats} />
 
         {/* Acciones rápidas */}
         <View style={styles.quickSection}>

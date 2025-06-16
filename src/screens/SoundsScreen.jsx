@@ -7,10 +7,12 @@ import {
   TouchableOpacity,
   Dimensions,
   Animated,
+  Modal, 
+  ScrollView
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { useAudioPlayer } from "expo-audio";
 
 
@@ -50,6 +52,7 @@ export default function SoundsScreen() {
   const [activeSound, setActiveSound] = useState(null);
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const scaleAnim = new Animated.Value(1);
+  const [mostrarInfo, setMostrarInfo] = useState(true);
 
   const playOrStopSound = async (sound) => {
     if (activeSound === sound.id && currentPlayer) {
@@ -109,6 +112,37 @@ export default function SoundsScreen() {
       colors={["#0f2027", "#203a43", "#2c5364"]}
       style={styles.container}
     >
+
+
+       {/* 🔵 Botón de información */}
+      <TouchableOpacity style={styles.infoButton} onPress={() => setMostrarInfo(true)}>
+        <Ionicons name="information-circle-outline" size={28} color="#fff" />
+      </TouchableOpacity>
+
+      {/* 🧘 MODAL INFORMATIVO */}
+      <Modal visible={mostrarInfo} animationType="slide" transparent>
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContent}>
+            <ScrollView>
+              <Text style={styles.modalTitle}>¿Qué hacen estos sonidos?</Text>
+              <Text style={styles.modalText}>
+                Los sonidos relajantes como la lluvia, el mar o el viento ayudan a reducir el estrés,
+                mejorar el enfoque, y facilitar el sueño.
+              </Text>
+              <Text style={styles.modalText}>
+                Pulsa sobre un sonido para escucharlo. Si vuelves a pulsar, se detendrá.
+              </Text>
+              <Text style={styles.modalText}>
+                Puedes usar estos sonidos para relajarte antes de dormir, estudiar, o meditar.
+              </Text>
+              <TouchableOpacity onPress={() => setMostrarInfo(false)} style={styles.modalButton}>
+                <Text style={styles.modalButtonText}>¡Entendido! Explorar sonidos</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
       <Text style={styles.header}>Ambientes de Sonido</Text>
       <FlatList
         data={sounds}
@@ -123,11 +157,6 @@ export default function SoundsScreen() {
 }
 
 const styles = StyleSheet.create({
-  testButton: {
-    backgroundColor: "#ffffff33",
-    padding: 6,
-    borderRadius: 20,
-  },
   container: {
     flex: 1,
     paddingTop: 60,
@@ -143,33 +172,46 @@ const styles = StyleSheet.create({
   list: {
     paddingBottom: 80,
   },
-  card: {
+
+  // Estilos para el modal informativo
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.85)",
+    justifyContent: "center",
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
     borderRadius: 20,
-    overflow: "hidden",
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    padding: 20,
+    maxHeight: "80%",
   },
-  activeCard: {
-    shadowColor: "#56CCF2",
-    shadowOpacity: 0.8,
-    elevation: 12,
-  },
-  gradient: {
-    width: width - 40,
-    height: 130,
-    borderRadius: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    justifyContent: "space-between",
-  },
-  titleText: {
-    color: "#fff",
+  modalTitle: {
     fontSize: 20,
-    fontWeight: "600",
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: "#333",
+  },
+  modalButton: {
+    backgroundColor: "#3A6073",
+    marginTop: 20,
+    padding: 12,
+    borderRadius: 10,
+  },
+  modalButtonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+  },
+
+  infoButton: {
+    position: "absolute",
+    top: 40,
+    right: 20,
+    zIndex: 10,
   },
 });

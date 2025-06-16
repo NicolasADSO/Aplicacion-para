@@ -30,7 +30,7 @@ const features = [
   {
     title: "Juegos",
     icon: "extension",
-    screen: "ListaDeJuegos",
+    screen: "GameListScreen",
     color: "#9C27B0",
     description: "Entrenamiento mental",
   },
