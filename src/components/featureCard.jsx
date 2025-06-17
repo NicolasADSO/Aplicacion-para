@@ -12,18 +12,22 @@ import { useHeartRate } from "../context/HeartRateContext";
 
 const { width } = Dimensions.get("window");
 
-const images = {
-  Ejercicios: require("../assets/images/ejercicios.png"),
-  Respiracion: require("../assets/images/respiracion.png"),
-  Sonidos: require("../assets/images/sonidos.jpg"),
-  Biblioteca: require("../assets/images/biblioteca.jpg"),
-  defecto: require("../assets/images/defecto.jpg")
-};
-
 export const FeatureCard = ({ item, theme, navigation }) => {
   const { getRecommendedActivities, isConnected } = useHeartRate();
   const recommended = getRecommendedActivities();
   const isRecommended = recommended.includes(item.title);
+
+  const images = {
+    Ejercicios: require("../assets/images/ejercicios.jpg"),
+    Respiracion: require("../assets/images/respiracion.jpg"),
+    Sonidos: require("../assets/images/sonidos.jpg"),
+    Biblioteca: require("../assets/images/biblioteca.jpg"),
+    Juegos: require("../assets/images/juegos.jpg"),
+    defaultImage: require("../assets/images/defecto.jpg")
+  };
+
+
+  const imageSource = images[item.title] || images.defaultImage;  
 
   return (
     <TouchableOpacity
@@ -40,7 +44,7 @@ export const FeatureCard = ({ item, theme, navigation }) => {
       activeOpacity={0.9}
     >
       <ImageBackground
-        source={images[item.title] || images.defecto}
+        source={imageSource}
         style={styles.imageBackground}
         imageStyle={styles.imageStyle}
       >
