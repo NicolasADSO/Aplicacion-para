@@ -11,8 +11,9 @@
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff",
-      "permissions": ["CAMERA"]
-        
+      "permissions": [
+        "CAMERA"
+      ]
     },
     "ios": {
       "supportsTablet": true,
@@ -22,8 +23,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff",
-        "permissions": ["CAMERA"]
-      }
+        "permissions": [
+          "CAMERA"
+        ]
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -31,6 +38,11 @@
     "plugins": [
       "expo-audio",
       "expo-video"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2f86d234-7c04-442d-8086-edcd8cd00d2b"
+      }
+    }
   }
 }
