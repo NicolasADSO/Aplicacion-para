@@ -17,6 +17,7 @@ const images = {
   Respiracion: require("../assets/images/respiracion.png"),
   Sonidos: require("../assets/images/sonidos.jpg"),
   Biblioteca: require("../assets/images/biblioteca.jpg"),
+  defecto: require("../assets/images/defecto.jpg")
 };
 
 export const FeatureCard = ({ item, theme, navigation }) => {
@@ -39,7 +40,7 @@ export const FeatureCard = ({ item, theme, navigation }) => {
       activeOpacity={0.9}
     >
       <ImageBackground
-        source={images[item.title]}
+        source={images[item.title] || images.defecto}
         style={styles.imageBackground}
         imageStyle={styles.imageStyle}
       >
