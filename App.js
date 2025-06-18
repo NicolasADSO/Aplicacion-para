@@ -24,6 +24,12 @@ import {  JuegoColorear } from "./src/screens/Juegos/JuegoColorear";
 import {   JuegoCírculo } from "./src/screens/Juegos/JuegoCírculo";
 import { PuzzleGameScreen } from "./src/screens/Juegos/PuzzleGameScreen";
 import { iniciojuego } from "./src/screens/Juegos/iniciojuego";
+import BookReaderScreens from "./src/screens/Libros/BookReaderScreen";
+import YogaExerciseScreen from "./src/screens/yogaExerciseScreen";
+import SoundsScreen from "./src/screens/SoundsScreen";
+import LibraryScreen from "./src/screens/LibraryScreen";
+
+
 
 
 const Stack = createStackNavigator();
@@ -76,7 +82,10 @@ export default function App() {
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="MainTabs" component={MainTabs} />
           <Stack.Screen name="AdminScreen" component={AdminScreen} />
-          <Stack.Screen name="Respiracion" component={RespiracionScreen} />
+            <Stack.Screen name="Respiracion" component={RespiracionScreen} />
+          <Stack.Screen name="Ejercicios" component={YogaExerciseScreen} />
+          <Stack.Screen name="Sonidos" component={SoundsScreen} />
+          <Stack.Screen name="Biblioteca" component={LibraryScreen} />
           <Stack.Screen name="GameListScreen" component={GameListScreen} />
           <Stack.Screen name="Pulso" component={PulseCameraScreen} />
           <Stack.Screen name="Perfil" component={ProfileScreen} />
@@ -86,6 +95,7 @@ export default function App() {
           <Stack.Screen name="JuegoColorear" component={JuegoColorear} />
           <Stack.Screen name="JuegoCírculo" component={JuegoCírculo} />
           <Stack.Screen name="InicioJuego" component={iniciojuego} />
+          <Stack.Screen name="BookReader" component={BookReaderScreens} />
         </Stack.Navigator>
       </NavigationContainer>
     </HeartRateProvider>

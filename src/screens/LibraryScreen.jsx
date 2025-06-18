@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,12 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  Modal,
+  ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
@@ -19,22 +22,28 @@ const books = [
     author: 'Eckhart Tolle',
     description: 'Vive el presente y libérate del estrés y ansiedad.',
     imageUrl: 'https://th.bing.com/th/id/OIP.JOgF3DvfhALeBvDXug2PLQHaHa?w=176&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7',
+    pdfUrl: 'https://training.crecimiento.ws/wp-content/uploads/2020/03/El_Poder_del_Ahora-Eckhart_Tolle.pdf',
   },
   {
     title: 'Casi todo es resuelto',
     author: 'Karen Mcdonnell',
     description: 'Técnicas prácticas para dominar la ansiedad cotidiana.',
-    imageUrl: 'https://th.bing.com/th/id/OIP.uVua4zxYLnFzV360rc_PzwHaMR?w=194&h=321&c=7&r=0&o=5&dpr=1.3&pid=1.7',
+    imageUrl: 'https://cdn.bookey.app/files/pdf/book/es/la-teoria-de-casi-todo.pdf',
+    pdfUrl: 'https://cdn.bookey.app/files/pdf/book/es/la-teoria-de-casi-todo.pdf',
   },
   {
     title: 'La ansiedad',
     author: 'P. M. Orozco',
     description: 'Aborda tu ansiedad con consciencia y compasión.',
-    imageUrl: 'https://th.bing.com/th/id/OIP.9Zsm9EgGRDRdq2et1-Fg-QHaLU?w=202&h=309&c=7&r=0&o=5&dpr=1.3&pid=1.7',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQodmbEQsNdaQI4hrgss7sraJMvFaOAPlh1yw&s',
+    pdfUrl: 'https://elfindelaansiedad.com/wp-content/uploads/2020/04/ElFinDeLaAnsiedadMuestra.pdf',
   },
 ];
 
 export default function LibraryScreen() {
+  const [mostrarInfo, setMostrarInfo] = useState(true);
+  const navigation = useNavigation(); // ✅ ahora correctamente dentro del componente
+
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <Image source={{ uri: item.imageUrl }} style={styles.bookImage} />
@@ -42,7 +51,14 @@ export default function LibraryScreen() {
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.author}>por {item.author}</Text>
         <Text style={styles.description}>{item.description}</Text>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            navigation.navigate("BookReader", {
+              pdfUrl: item.pdfUrl,
+            })
+          }
+        >
           <Text style={styles.buttonText}>Ver más</Text>
         </TouchableOpacity>
       </View>
@@ -51,6 +67,34 @@ export default function LibraryScreen() {
 
   return (
     <LinearGradient colors={['#0f2027', '#203a43', '#2c5364']} style={styles.container}>
+      {/* Botón de información */}
+      <TouchableOpacity style={styles.infoButton} onPress={() => setMostrarInfo(true)}>
+        <Ionicons name="information-circle-outline" size={28} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Modal informativo */}
+      <Modal visible={mostrarInfo} animationType="slide" transparent>
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContent}>
+            <ScrollView>
+              <Text style={styles.modalTitle}>¿Qué es la Biblioteca de Bienestar?</Text>
+              <Text style={styles.modalText}>
+                Aquí encontrarás libros seleccionados para ayudarte a comprender, manejar y transformar la ansiedad.
+              </Text>
+              <Text style={styles.modalText}>
+                Cada libro ofrece herramientas prácticas, reflexiones profundas y técnicas para el crecimiento personal y la calma mental.
+              </Text>
+              <Text style={styles.modalText}>
+                Pulsa "Ver más" para explorar o leer el libro completo.
+              </Text>
+              <TouchableOpacity onPress={() => setMostrarInfo(false)} style={styles.modalButton}>
+                <Text style={styles.modalButtonText}>¡Entendido! Explorar libros</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
       <Text style={styles.header}>Biblioteca de Bienestar</Text>
       <FlatList
         data={books}
@@ -130,5 +174,46 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: '600',
+  },
+
+  // Estilos para modal
+  infoButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    zIndex: 10,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.85)",
+    justifyContent: "center",
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 20,
+    maxHeight: "80%",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: "#333",
+  },
+  modalButton: {
+    backgroundColor: "#3A6073",
+    marginTop: 20,
+    padding: 12,
+    borderRadius: 10,
+  },
+  modalButtonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
   },
 });

@@ -39,11 +39,7 @@ export const MainTabs = () => {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Ejercicios" component={YogaExercisesScreen} />
-      <Tab.Screen name="Respiracion" component={RespiracionScreen} />
       <Tab.Screen name="Pulso" component={PulseCameraScreen} />
-      <Tab.Screen name="Sonidos" component={SoundScreen} />
-      <Tab.Screen name="Biblioteca" component={LibraryScreen} />
       <Tab.Screen name="Perfil" component={ProfileScreen} />
     </Tab.Navigator>
   );
