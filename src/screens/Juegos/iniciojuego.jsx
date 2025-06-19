@@ -38,7 +38,7 @@ const difficulties = [
 const { width } = Dimensions.get("window");
 const previewSize = width / 3.2;
 
-export const iniciojuego = () => {
+export const Iniciojuego = () => {
   const navigation = useNavigation();
   const [selectedPuzzle, setSelectedPuzzle] = useState("paisaje");
   const [selectedGridSize, setSelectedGridSize] = useState(3);
