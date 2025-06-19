@@ -15,7 +15,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons} from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
-import FloatingProfileButton from '../components/FloatingProfileButton';
+
 
 const yogaPoses = [
   {
@@ -157,8 +157,6 @@ export default function YogaExerciseScreen() {
           <Text style={styles.buttonText}>Siguiente</Text>
         </TouchableOpacity>
       </Animated.View>
-
-      <FloatingProfileButton />
     </LinearGradient>
   );
 }
