@@ -1,5 +1,19 @@
 import {supabase} from '../supabase/supabase' 
 
+export const getInfoUser = async()=>{
+  const [data, error] = await supabase
+    .from("usuarios")
+    .select("nombre")
+    .single();
+
+  if(error){
+    console.error(error)
+    return null
+  }
+
+  return data.nombre
+}
+
 export const loginUser = async (email, password) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email.toLowerCase(),
