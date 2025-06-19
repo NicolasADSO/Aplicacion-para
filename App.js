@@ -23,7 +23,7 @@ import { JuegoMemorama } from "./src/screens/Juegos/JuegoMemorama";
 import {  JuegoColorear } from "./src/screens/Juegos/JuegoColorear";
 import {   JuegoCírculo } from "./src/screens/Juegos/JuegoCírculo";
 import { PuzzleGameScreen } from "./src/screens/Juegos/PuzzleGameScreen";
-import { iniciojuego } from "./src/screens/Juegos/iniciojuego";
+import { Iniciojuego } from "./src/screens/Juegos/iniciojuego";
 import BookReaderScreens from "./src/screens/Libros/BookReaderScreen";
 import YogaExerciseScreen from "./src/screens/yogaExerciseScreen";
 import SoundsScreen from "./src/screens/SoundsScreen";
@@ -94,7 +94,7 @@ export default function App() {
           <Stack.Screen name="JuegoMemorama" component={JuegoMemorama} />
           <Stack.Screen name="JuegoColorear" component={JuegoColorear} />
           <Stack.Screen name="JuegoCírculo" component={JuegoCírculo} />
-          <Stack.Screen name="InicioJuego" component={iniciojuego} />
+          <Stack.Screen name="InicioJuego" component={Iniciojuego} />
           <Stack.Screen name="BookReader" component={BookReaderScreens} />
         </Stack.Navigator>
       </NavigationContainer>
