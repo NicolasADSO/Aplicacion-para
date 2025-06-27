@@ -7,6 +7,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isAuthLoaded, setIsAuthLoaded] = useState(false); // ✅ Indicador de carga
 
   const loginUser = async (userData) => {
     try {
@@ -29,51 +30,60 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Restaurar sesión automáticamente
   useEffect(() => {
-    const cargarUsuario = async () => {
-      try {
-        const { data: sessionData } = await supabase.auth.getSession();
-        const session = sessionData?.session;
+  const cargarUsuario = async () => {
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session;
 
-        if (session?.user) {
-          const userId = session.user.id;
+      const avatarLocal = await AsyncStorage.getItem('avatar_uri'); // 👈 Nuevo
 
-          // Buscar el nombre en la tabla personalizada `usuarios`
-          const { data: perfil, error } = await supabase
-            .from("usuarios")
-            .select("nombre")
-            .eq("user_id", userId)
-            .single();
+      if (session?.user) {
+        const userId = session.user.id;
 
-          const usuarioFinal = {
-            id: userId,
-            email: session.user.email,
-            nombre: perfil?.nombre || 'Usuario',
-          };
+        const { data: perfil, error } = await supabase
+          .from("usuarios")
+          .select("nombre")
+          .eq("user_id", userId)
+          .single();  
 
-          setUser(usuarioFinal);
-          await AsyncStorage.setItem('usuario', JSON.stringify(usuarioFinal));
-          console.log("🔄 Sesión restaurada desde Supabase:", usuarioFinal);
-        } else {
-          // Fallback: recuperar del almacenamiento local
-          const localData = await AsyncStorage.getItem('usuario');
-          if (localData) {
-            const parsed = JSON.parse(localData);
-            setUser(parsed);
-            console.log("🗂️ Usuario restaurado desde AsyncStorage:", parsed);
-          }
+        const usuarioFinal = {
+          id: userId,
+          email: session.user.email,
+          nombre: perfil?.nombre || 'Usuario',
+          avatar_uri: avatarLocal || null, // 👈 Preferimos lo local
+        };
+
+        setUser(usuarioFinal);
+        await AsyncStorage.setItem('usuario', JSON.stringify(usuarioFinal));
+        console.log("🔄 Sesión restaurada desde Supabase + avatar local:", usuarioFinal);
+      } else {
+        const localData = await AsyncStorage.getItem('usuario');
+        if (localData) {
+          const parsed = JSON.parse(localData);
+          const avatarLocal = await AsyncStorage.getItem('avatar_uri'); // 👈 nuevo
+          setUser({
+            ...parsed,
+            avatar_uri: avatarLocal || null,
+          });
+          console.log("🗂️ Usuario restaurado desde AsyncStorage:", {
+            ...parsed,
+            avatar_uri: avatarLocal || null,
+          });
         }
-      } catch (error) {
-        console.error("❌ Error restaurando sesión:", error);
       }
-    };
+    } catch (error) {
+      console.error("❌ Error restaurando sesión:", error);
+    } finally {
+      setIsAuthLoaded(true);
+    }
+  };
 
-    cargarUsuario();
-  }, []);
+  cargarUsuario();
+}, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loginUser, logoutUser }}>
+    <AuthContext.Provider value={{ user, setUser, loginUser, logoutUser, isAuthLoaded }}>
       {children}
     </AuthContext.Provider>
   );

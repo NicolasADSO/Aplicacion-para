@@ -1,4 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+// ✅ Versión con selección de avatar desde galería de avatares predefinidos + opción de cambiar avatar
+
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,28 +15,40 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/AuthContext';
 import { BlurView } from 'expo-blur';
+import { FlatList } from 'react-native';
+import { avatarMap } from '../context/avatarMap';
 import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {
   obtenerPuntuacionesMemorama,
   obtenerPuntuacionesRompecabezas,
   obtenerPuntuacionesRespiracion,
   obtenerSesionesYoga,
+  actualizarAvatarUsuario,
+  obtenerAvatarUsuario,
 } from '../services/authService';
 
 if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
+const avatarList = Object.entries(avatarMap);
+
 export default function ProfileScreen({ navigation }) {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [puntuacionesMemorama, setPuntuacionesMemorama] = useState([]);
   const [puntuacionesRompecabezas, setPuntuacionesRompecabezas] = useState([]);
   const [puntuacionesRespiracion, setPuntuacionesRespiracion] = useState([]);
   const [puntuacionesYoga, setPuntuacionesYoga] = useState([]);
   const [showAllMemorama, setShowAllMemorama] = useState(false);
   const [showAllRompecabezas, setShowAllRompecabezas] = useState(false);
+  const [avatarUri, setAvatarUri] = useState(null);
+  const [avatarSeleccionado, setAvatarSeleccionado] = useState(false);
+  const [mensajeExito, setMensajeExito] = useState("");
+  
 
   useFocusEffect(
     useCallback(() => {
@@ -42,9 +56,81 @@ export default function ProfileScreen({ navigation }) {
       cargarPuntuacionesRompecabezas();
       cargarPuntuacionesRespiracion();
       cargarSesionesYoga();
+      cargarAvatar();
     }, [user])
   );
 
+  const cargarAvatar = async () => {
+  try {
+    const nombreArchivo = await AsyncStorage.getItem('avatar_uri');
+    if (nombreArchivo && avatarMap[nombreArchivo]) {
+      const uri = Image.resolveAssetSource(avatarMap[nombreArchivo]).uri;
+      setAvatarUri(uri);
+      setAvatarSeleccionado(true);
+      console.log('✅ Avatar cargado desde AsyncStorage:', nombreArchivo);
+    } else {
+      setAvatarUri(null);
+      setAvatarSeleccionado(false);
+      console.log('🔄 Avatar no encontrado, usando predeterminado.');
+    }
+  } catch (error) {
+    console.error('❌ Error cargando avatar desde AsyncStorage:', error);
+  }
+};
+
+
+  const seleccionarAvatar = async (nombreArchivo) => {
+  const imagen = avatarMap[nombreArchivo];
+  const uri = Image.resolveAssetSource(imagen).uri;
+
+  // Mostrar avatar inmediatamente
+  setAvatarUri(uri);
+  setAvatarSeleccionado(true);
+
+  // Guardar en AsyncStorage
+  await AsyncStorage.setItem('avatar_uri', nombreArchivo);
+
+  // Actualizar también el usuario local del contexto
+  if (user?.id) {
+    const usuarioActualizado = {
+      ...user,
+      avatar_uri: nombreArchivo,
+    };
+    setUser(usuarioActualizado);
+    await AsyncStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+
+    console.log('✅ Avatar guardado localmente:', nombreArchivo);
+    setMensajeExito('Avatar actualizado con éxito 🎉');
+    setTimeout(() => setMensajeExito(''), 3000);
+  }
+};
+
+
+
+  const reiniciarAvatar = async () => {
+  try {
+    await AsyncStorage.removeItem('avatar_uri');
+    
+    if (user?.id) {
+      const usuarioActualizado = {
+        ...user,
+        avatar_uri: null,
+      };
+      setUser(usuarioActualizado);
+      await AsyncStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+    }
+
+    setAvatarUri(null);
+    setAvatarSeleccionado(false);
+
+    console.log("🔄 Avatar reiniciado localmente.");
+  } catch (error) {
+    console.error("❌ Error al reiniciar avatar:", error);
+  }
+};
+
+
+  // ... resto del código permanece igual ...
   const cargarPuntuacionesMemorama = async () => {
     if (!user?.id) return;
     const resultados = await obtenerPuntuacionesMemorama(user.id);
@@ -75,6 +161,12 @@ export default function ProfileScreen({ navigation }) {
     return (total / lista.length).toFixed(2);
   };
 
+  const calcularPromedioTiempo = (lista) => {
+    if (lista.length === 0) return 0;
+    const total = lista.reduce((sum, p) => sum + (p.tiempo_restante || 0), 0);
+    return Math.floor(total / lista.length);
+  };
+
   const compartirMejorPuntaje = async () => {
     const mejorMemorama = Math.max(...puntuacionesMemorama.map(p => p.puntaje));
     const mejorRompe = Math.max(...puntuacionesRompecabezas.map(p => p.puntaje));
@@ -88,6 +180,8 @@ export default function ProfileScreen({ navigation }) {
 
   const promedioMemorama = calcularPromedio(puntuacionesMemorama);
   const promedioRompecabezas = calcularPromedio(puntuacionesRompecabezas);
+  const tiempoPromedioMemorama = calcularPromedioTiempo(puntuacionesMemorama);
+  const tiempoPromedioRompecabezas = calcularPromedioTiempo(puntuacionesRompecabezas);
 
   const renderPuntuaciones = (puntuaciones, showAll, toggleShowAll) => (
     <>
@@ -111,11 +205,50 @@ export default function ProfileScreen({ navigation }) {
     <LinearGradient colors={['#141E30', '#243B55']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.profileHeader}>
-          <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.avatar} />
+          <Image
+            source={avatarUri ? { uri: avatarUri } : require('../assets/avatars/avatar1.avif')}
+            style={styles.avatar}
+          />
+          {mensajeExito !== '' && (
+            <View style={styles.toast}>
+              <Text style={styles.toastText}>{mensajeExito}</Text>
+            </View>
+          )}
+
+          {!avatarSeleccionado && (
+            <FlatList
+              data={avatarList}
+              keyExtractor={([nombre]) => nombre}
+              horizontal
+              renderItem={({ item: [nombre, imagen] }) => (
+                <TouchableOpacity onPress={() => seleccionarAvatar(nombre)} style={{ marginHorizontal: 6 }}>
+                  <Image
+                    source={imagen}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 25,
+                      borderWidth: 2,
+                      borderColor: avatarUri?.includes(nombre) ? '#56CCF2' : 'transparent',
+                    }}
+                  />
+                </TouchableOpacity>
+              )}
+            />
+          )}
+
+          {avatarSeleccionado && (
+            <TouchableOpacity onPress={reiniciarAvatar} style={styles.changeAvatarButton}>
+              <Text style={styles.changeAvatarText}>Cambiar avatar</Text>
+            </TouchableOpacity>
+          )}
+
           <Text style={styles.username}>Hola, {user?.nombre || 'Usuario'} 👋</Text>
           <Text style={styles.subtitle}>Tus estadísticas de bienestar</Text>
         </View>
 
+        {/* Resto del código permanece igual */}
+         {/* El resto permanece igual */}
         <BlurView intensity={40} tint="light" style={styles.statsCard}>
           <View style={styles.statItem}>
             <MaterialIcons name="check-circle" size={28} color="#56CCF2" />
@@ -201,7 +334,6 @@ export default function ProfileScreen({ navigation }) {
     </LinearGradient>
   );
 }
-
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 60, paddingHorizontal: 20 },
   scrollContent: { paddingBottom: 40 },
@@ -280,4 +412,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 20,
   },
+  changeAvatarButton: {
+    marginTop: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: '#ffffff22',
+  },
+  changeAvatarText: {
+    color: '#56CCF2',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  toast: {
+  position: 'absolute',
+  top: 30,
+  left: 20,
+  right: 20,
+  padding: 12,
+  backgroundColor: '#2ecc71',
+  borderRadius: 10,
+  zIndex: 999,
+  alignItems: 'center',
+},
+toastText: {
+  color: '#fff',
+  fontWeight: 'bold',
+},
 });
+
+// ... estilos sin cambios ...

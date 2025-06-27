@@ -71,15 +71,19 @@ export function JuegoMemorama() {
   }, [tiempoRestante]);
 
   const iniciarJuego = (nivel) => {
-    const emojis = obtenerEmojisPorDificultad(nivel);
-    setCartas(generarCartas(emojis));
-    setSeleccionadas([]);
-    setTiempoRestante(obtenerTiempoPorDificultad(nivel));
-    clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setTiempoRestante((prev) => prev - 1);
-    }, 1000);
-  };
+  setDificultad(nivel); // ✅ ACTUALIZA LA DIFICULTAD SELECCIONADA
+
+  const emojis = obtenerEmojisPorDificultad(nivel);
+  setCartas(generarCartas(emojis));
+  setSeleccionadas([]);
+  setTiempoRestante(obtenerTiempoPorDificultad(nivel));
+
+  clearInterval(timerRef.current);
+  timerRef.current = setInterval(() => {
+    setTiempoRestante((prev) => prev - 1);
+  }, 1000);
+};
+
 
   const manejarToque = (id) => {
     const index = cartas.findIndex((c) => c.id === id);

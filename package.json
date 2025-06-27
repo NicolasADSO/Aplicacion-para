@@ -20,6 +20,7 @@
     "expo-av": "~15.1.5",
     "expo-blur": "~14.1.4",
     "expo-camera": "~16.1.7",
+    "expo-image-picker": "^16.1.4",
     "expo-linear-gradient": "~14.1.4",
     "expo-status-bar": "~2.2.3",
     "expo-video": "~2.1.8",
@@ -45,3 +46,20 @@
   },
   "private": true
 }
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+       

@@ -16,21 +16,22 @@ import {
 
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import backgroundImage from "../assets/images/fondo-login.jpg";
-import { loginUser } from "../services/authService";
-import { saveUserSession } from "../utils/session";
+import { useAuth } from "../context/AuthContext";
+import { loginUserSupabase } from "../services/authService";
 
 export const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const { loginUser } = useAuth(); // del contexto
+
   const handleLogin = async () => {
     try {
-      const userData = await loginUser(email, password);
-      await saveUserSession(userData);
+      const userData = await loginUserSupabase(email, password); // desde Supabase
+      await loginUser(userData); // guardar en contexto + AsyncStorage
 
       navigation.replace("MainTabs");
     } catch (error) {
@@ -110,7 +111,6 @@ export const LoginScreen = ({ navigation }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   background: {
     flex: 1,
@@ -153,8 +153,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffffcc",
     paddingVertical: 14,
     borderRadius: 14,
-    width: "200",
-    height: "auto",
+    width: 200,
     alignItems: "center",
     marginTop: 10,
   },
