@@ -1,19 +1,5 @@
 import {supabase} from '../supabase/supabase' 
 
-export const getInfoUser = async()=>{
-  const [data, error] = await supabase
-    .from("usuarios")
-    .select("nombre")
-    .single();
-
-  if(error){
-    console.error(error)
-    return null
-  }
-
-  return data.nombre
-}
-
 export const loginUser = async (email, password) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email.toLowerCase(),
@@ -79,3 +65,149 @@ export const registerUser = async (userName, email, password) => {
 
   return true; // Registro exitoso
 };
+export const guardarPuntuacionEnSupabase = async (user_id, puntuacion) => {
+  try {
+    const { error } = await supabase
+      .from("puntuaciones_memorama")
+      .insert([{ ...puntuacion, user_id }]);
+
+    if (error) {
+      console.error("❌ Error al guardar puntuación en Supabase:", error.message);
+    } else {
+      console.log("✅ Puntuación guardada en Supabase.");
+    }
+  } catch (err) {
+    console.error("❌ Error inesperado:", err);
+  }
+};
+export const obtenerPuntuacionesMemorama = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from('puntuaciones_memorama')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(3);
+
+    if (error) {
+      console.error('❌ Error al obtener puntuaciones de Supabase:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('❌ Error inesperado al obtener puntuaciones:', error);
+    return [];
+  }
+};
+export const guardarPuntuacionRompecabezas = async (user_id, puntuacion) => {
+  try {
+    const { error } = await supabase
+      .from("puntuaciones_rompecabezas")
+      .insert([{ ...puntuacion, user_id }]);
+
+    if (error) {
+      console.error("❌ Error al guardar puntuación del rompecabezas:", error.message);
+    } else {
+      console.log("✅ Puntuación de rompecabezas guardada en Supabase.");
+    }
+  } catch (err) {
+    console.error("❌ Error inesperado al guardar rompecabezas:", err);
+  }
+};
+export const obtenerPuntuacionesRompecabezas = async (user_id) => {
+  try {
+    const { data, error } = await supabase
+      .from("puntuaciones_rompecabezas")
+      .select("*")
+      .eq("user_id", user_id)
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    if (error) {
+      console.error("❌ Error al obtener puntuaciones de rompecabezas:", error.message);
+      return [];
+    }
+
+    return data;
+  } catch (err) {
+    console.error("❌ Error inesperado al obtener rompecabezas:", err);
+    return [];
+  }
+};
+export const guardarPuntuacionRespiracion = async (user_id, duracion) => {
+  try {
+    const { error } = await supabase
+      .from('puntuaciones_respiracion')
+      .insert([{ user_id, duracion }]);
+
+    if (error) {
+      console.error("❌ Error al guardar puntuación de respiración:", error.message);
+    } else {
+      console.log("✅ Sesión de respiración guardada.");
+    }
+  } catch (err) {
+    console.error("❌ Error inesperado:", err);
+  }
+};
+
+export const obtenerPuntuacionesRespiracion = async (user_id) => {
+  try {
+    const { data, error } = await supabase
+      .from('puntuaciones_respiracion')
+      .select('*')
+      .eq('user_id', user_id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error("❌ Error al obtener puntuaciones de respiración:", error.message);
+      return [];
+    }
+
+    return data;
+  } catch (err) {
+    console.error("❌ Error inesperado:", err);
+    return [];
+  }
+};
+
+// authService.js
+export const guardarPuntuacionYoga = async (user_id, duracion) => {
+  const { error } = await supabase.from('puntuaciones_yoga').insert([
+    { user_id, duracion }
+  ]);
+  if (error) throw error;
+};
+export const obtenerSesionesYoga = async (user_id) => {
+  const { data, error } = await supabase
+    .from('puntuaciones_yoga')
+    .select('*')
+    .eq('user_id', user_id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error obteniendo sesiones de yoga:', error);
+    return [];
+  }
+
+  return data;
+};
+export const obtenerSesionesYogaUltimaSemana = async (user_id) => {
+  const desde = new Date();
+  desde.setDate(desde.getDate() - 7);
+
+  const { data, error } = await supabase
+    .from('puntuaciones_yoga')
+    .select('*')
+    .eq('user_id', user_id)
+    .gte('created_at', desde.toISOString());
+
+  if (error) {
+    console.error('Error al obtener sesiones de yoga de la última semana:', error);
+    return [];
+  }
+
+  return data;
+};
+
+
