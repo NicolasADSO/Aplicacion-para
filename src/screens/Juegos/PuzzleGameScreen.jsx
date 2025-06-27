@@ -15,124 +15,25 @@ import {
 import { useRoute } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
-
-
-
-
+import { useAuth } from "../../context/AuthContext";
+import { guardarPuntuacionRompecabezas } from "../../services/authService";
 
 const { width } = Dimensions.get("window");
 const boardSize = Math.min(width - 40, 300);
 
 const puzzles = {
-  paisaje: require("../../assets/images/paisaje-preview.jpg"),
-  perro: require("../../assets/images/preview.jpg"),
-  bosque: require("../../assets/images/preview.jpg"),
+  paisaje: require("../../assets/images/biblioteca.jpg"),
+  Paisaje2: require("../../assets/images/biblioteca.jpg"),
+  Vaca: require("../../assets/images/biblioteca.jpg"),
 };
-
-// Reemplaza esta función dentro de tu archivo
 const getPieces = (puzzleId, gridSize) => {
   const pieces = {
     paisaje: {
-      3: [
-        require("../../assets/images/paisaje3x3/paisaje1_3x3.png"),
-        require("../../assets/images/paisaje3x3/paisaje2_3x3.png"),
-        require("../../assets/images/paisaje3x3/paisaje3_3x3.png"),
-        require("../../assets/images/paisaje3x3/paisaje4_3x3.png"),
-        require("../../assets/images/paisaje3x3/paisaje5_3x3.png"),
-        require("../../assets/images/paisaje3x3/paisaje6_3x3.png"),
-        require("../../assets/images/paisaje3x3/paisaje7_3x3.png"),
-        require("../../assets/images/paisaje3x3/paisaje8_3x3.png"),
-        require("../../assets/images/paisaje3x3/paisaje9_3x3.png"),
-      ],
-      4: [
-        require("../../assets/images/paisaje4x4/paisaje1_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje2_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje3_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje4_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje5_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje6_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje7_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje8_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje9_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje10_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje11_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje12_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje13_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje14_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje15_4x4.png"),
-        require("../../assets/images/paisaje4x4/paisaje16_4x4.png"),
-      ],
-      6: [
-        require("../../assets/images/paisaje6x6/paisaje1.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje2.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje3.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje4.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje5.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje6.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje7.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje8.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje9.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje10.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje11.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje12.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje13.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje14.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje15.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje16.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje17.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje18.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje19.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje20.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje21.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje22.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje23.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje24.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje25.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje26.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje27.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje28.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje29.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje30.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje31.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje32.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje33.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje34.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje35.6x6.png"),
-        require("../../assets/images/paisaje6x6/paisaje36.6x6.png"),
-      ]
-
-    },
-    perro: {
-      3: [
-        require("../../assets/images/piece_0.png"),
-        require("../../assets/images/piece_1.png"),
-        require("../../assets/images/piece_2.png"),
-        require("../../assets/images/piece_3.png"),
-        require("../../assets/images/piece_4.png"),
-        require("../../assets/images/piece_5.png"),
-        require("../../assets/images/piece_6.png"),
-        require("../../assets/images/piece_7.png"),
-        require("../../assets/images/piece_8.png"),
-      ]
-    },
-    bosque: {
-      3: [
-        require("../../assets/images/piece_0.png"),
-        require("../../assets/images/piece_1.png"),
-        require("../../assets/images/piece_2.png"),
-        require("../../assets/images/piece_3.png"),
-        require("../../assets/images/piece_4.png"),
-        require("../../assets/images/piece_5.png"),
-        require("../../assets/images/piece_6.png"),
-        require("../../assets/images/piece_7.png"),
-        require("../../assets/images/piece_8.png"),
-      ]
     }
   };
 
   return pieces[puzzleId]?.[gridSize] || [];
 };
-
 
 export const PuzzleGameScreen = () => {
   const route = useRoute();
@@ -150,6 +51,8 @@ export const PuzzleGameScreen = () => {
   const [isDark, setIsDark] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const { user } = useAuth();
 
   useEffect(() => {
     reiniciar();
@@ -202,9 +105,18 @@ export const PuzzleGameScreen = () => {
 
     if (nuevoTablero.every((ficha, i) => ficha && ficha.id === i)) {
       const puntuacion = Math.max(1000 - elapsed * 10, 100);
-      Alert.alert("🎉 ¡Excelente!",
-        `Has completado el puzzle.\nTiempo: ${elapsed} s\nPuntuación: ${puntuacion}`
-      );
+      Alert.alert("🎉 ¡Excelente!", `Has completado el puzzle.\nTiempo: ${elapsed} s\nPuntuación: ${puntuacion}`);
+
+      if (user?.id) {
+        const dificultadTexto = gridSize === 3 ? "fácil" : gridSize === 4 ? "media" : "difícil";
+        guardarPuntuacionRompecabezas(user.id, {
+          dificultad: dificultadTexto,
+          puntaje: puntuacion,
+          tiempo_restante: 0,
+        });
+      } else {
+        console.warn("⚠️ No se pudo guardar: el usuario no está autenticado.");
+      }
     }
   };
 
@@ -228,18 +140,14 @@ export const PuzzleGameScreen = () => {
         {tablero.map((ficha, i) => (
           <TouchableOpacity
             key={i}
-            style={[
-    {
-    width: cellSize,
-    height: cellSize,
-    borderWidth: 1,
-    borderColor: "#B0BEC5",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  ficha?.id === i && styles.correctCell
-]}
-
+            style={[{
+              width: cellSize,
+              height: cellSize,
+              borderWidth: 1,
+              borderColor: "#B0BEC5",
+              justifyContent: "center",
+              alignItems: "center"
+            }, ficha?.id === i && styles.correctCell]}
             onPress={() => colocarFicha(i)}
           >
             {ficha && (
@@ -257,10 +165,7 @@ export const PuzzleGameScreen = () => {
         {fichasDisponibles.map((ficha) => (
           <TouchableOpacity
             key={ficha.id}
-            style={[
-              styles.pieceButton,
-              seleccionada?.id === ficha.id && { borderColor: "#2196F3", borderWidth: 2 },
-            ]}
+            style={[styles.pieceButton, seleccionada?.id === ficha.id && { borderColor: "#2196F3", borderWidth: 2 }]}
             onPress={() => setSeleccionada(seleccionada?.id === ficha.id ? null : ficha)}
           >
             <Image source={ficha.img} style={styles.image} />
@@ -309,11 +214,6 @@ const styles = StyleSheet.create({
   progress: { fontSize: 13, marginBottom: 10 },
   subtitle: { fontSize: 14, fontWeight: "600", marginTop: 24, marginBottom: 8 },
   grid: { flexDirection: "row", flexWrap: "wrap", borderRadius: 12, overflow: "hidden" },
-  cell: {
-    width: boardSize / 3, height: boardSize / 3,
-    borderWidth: 1, borderColor: "#B0BEC5",
-    justifyContent: "center", alignItems: "center"
-  },
   correctCell: {
     borderColor: "#4CAF50",
     shadowColor: "#4CAF50",

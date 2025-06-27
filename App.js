@@ -19,6 +19,8 @@ import AdminScreen from "./src/screens/adminScreen";
 import { HeartRateProvider } from "./src/context/HeartRateContext";
 import { PulseCameraScreen } from "./src/screens/pulseCameraScreen";
 import { GameListScreen } from "./src/screens/GameListScreen";
+import { AuthProvider } from "./src/context/AuthContext"; 
+
 import { JuegoMemorama } from "./src/screens/Juegos/JuegoMemorama";
 import {  JuegoColorear } from "./src/screens/Juegos/JuegoColorear";
 import {   JuegoCírculo } from "./src/screens/Juegos/JuegoCírculo";
@@ -28,6 +30,7 @@ import BookReaderScreens from "./src/screens/Libros/BookReaderScreen";
 import YogaExerciseScreen from "./src/screens/yogaExerciseScreen";
 import SoundsScreen from "./src/screens/SoundsScreen";
 import LibraryScreen from "./src/screens/LibraryScreen";
+import {EstadisticasScreen} from "./src/screens/EstadisticasScreen";
 
 
 
@@ -76,6 +79,7 @@ export default function App() {
 
   return (
     <HeartRateProvider>
+      <AuthProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName={isLoggedIn ? "MainTabs" : "Login"} screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -96,8 +100,10 @@ export default function App() {
           <Stack.Screen name="JuegoCírculo" component={JuegoCírculo} />
           <Stack.Screen name="InicioJuego" component={Iniciojuego} />
           <Stack.Screen name="BookReader" component={BookReaderScreens} />
+          <Stack.Screen name="Estadisticas" component={EstadisticasScreen} />
         </Stack.Navigator>
       </NavigationContainer>
+      </AuthProvider>
     </HeartRateProvider>
   );
 }
