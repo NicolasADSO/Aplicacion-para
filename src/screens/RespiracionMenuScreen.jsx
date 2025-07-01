@@ -4,68 +4,71 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
   StatusBar,
+  FlatList,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
-const juegos = [
+const ejercicios = [
   {
-    title: "Rompecabezas",
-    icon: "extension",
-    screen: "InicioJuego",
-    description: "Arma la imagen arrastrando las piezas",
+    nombre: "Respiración Básica",
+    descripcion: "Inhala 4s · Mantén 2s · Exhala 4s",
+    ruta: "RespiracionScreen",
+    icon: "air",
   },
   {
-    title: "Encuentra el Par",
-    icon: "memory",
-    screen: "JuegoMemorama",
-    description: "Memoriza y encuentra las parejas",
+    nombre: "Box Breathing",
+    descripcion: "4 fases de 4 segundos",
+    ruta: "EjercicioBoxBreathing",
+    icon: "crop-square",
   },
   {
-    title: "Color Zen",
-    icon: "palette",
-    screen: "JuegoColorear",
-    description: "Colorea mandalas relajantes",
+    nombre: "Respiración 4-7-8",
+    descripcion: "Relajación profunda",
+    ruta: "Ejercicio478",
+    icon: "timer",
   },
   {
-    title: "Centro y Calma",
-    icon: "touch-app",
-    screen: "JuegoCírculo",
-    description: "Toca el círculo en el momento justo",
+    nombre: "Respiración 5-5-5",
+    descripcion: "Equilibrio emocional",
+    ruta: "Ejercicio555",
+    icon: "change-history",
   },
 ];
 
-export const GameListScreen = ({ navigation }) => {
+export function RespiracionMenu() {
+  const navigation = useNavigation();
+
   return (
     <LinearGradient colors={["#0f2027", "#203a43", "#2c5364"]} style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <Text style={styles.title}>🎮 Juegos Disponibles</Text>
+      <Text style={styles.title}>🌬️ Elige un ejercicio de respiración</Text>
+
       <FlatList
-        data={juegos}
-        keyExtractor={(item) => item.title}
+        data={ejercicios}
+        keyExtractor={(item) => item.ruta}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={styles.card}
             activeOpacity={0.85}
-            onPress={() => navigation.navigate(item.screen)}
+            style={styles.card}
+            onPress={() => navigation.navigate(item.ruta)}
           >
             <View style={styles.iconContainer}>
               <MaterialIcons name={item.icon} size={28} color="#fff" />
             </View>
-            <View style={styles.info}>
-              <Text style={styles.name}>{item.title}</Text>
-              <Text style={styles.description}>{item.description}</Text>
+            <View>
+              <Text style={styles.cardTitle}>{item.nombre}</Text>
+              <Text style={styles.cardDescription}>{item.descripcion}</Text>
             </View>
-            <MaterialIcons name="navigate-next" size={28} color="#ccc" />
           </TouchableOpacity>
         )}
       />
     </LinearGradient>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -75,8 +78,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 26,
-    fontWeight: "bold",
     color: "#fff",
+    fontWeight: "bold",
     marginBottom: 24,
     textAlign: "center",
   },
@@ -87,14 +90,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.05)",
-    padding: 18,
-    borderRadius: 18,
+    padding: 20,
+    borderRadius: 20,
     marginBottom: 18,
+    gap: 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 8,
+    shadowOpacity: 0.2,
+    shadowRadius: 6.27,
+    elevation: 10,
   },
   iconContainer: {
     backgroundColor: "rgba(255,255,255,0.1)",
@@ -103,16 +107,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  info: {
-    flex: 1,
-    marginHorizontal: 14,
-  },
-  name: {
+  cardTitle: {
     fontSize: 18,
-    fontWeight: "bold",
     color: "#fff",
+    fontWeight: "700",
   },
-  description: {
+  cardDescription: {
     fontSize: 14,
     color: "#ccc",
     marginTop: 4,

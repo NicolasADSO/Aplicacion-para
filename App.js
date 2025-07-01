@@ -25,6 +25,11 @@ import YogaExerciseScreen from "./src/screens/yogaExerciseScreen";
 import SoundsScreen from "./src/screens/SoundsScreen";
 import LibraryScreen from "./src/screens/LibraryScreen";
 import { EstadisticasScreen } from "./src/screens/EstadisticasScreen";
+import {RespiracionMenu} from "./src/screens/RespiracionMenuScreen";
+import { Ejercicio478 } from "./src/screens/Ejercicio478";
+import { Ejercicio555 } from "./src/screens/Ejercicio555";
+import { EjercicioBoxBreathing } from "./src/screens/EjercicioBoxBreathing";
+
 
 const Stack = createStackNavigator();
 
@@ -49,7 +54,7 @@ function AppNavigator() {
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="MainTabs" component={MainTabs} />
         <Stack.Screen name="AdminScreen" component={AdminScreen} />
-        <Stack.Screen name="Respiracion" component={RespiracionScreen} />
+        <Stack.Screen name="RespiracionScreen" component={RespiracionScreen} />
         <Stack.Screen name="Ejercicios" component={YogaExerciseScreen} />
         <Stack.Screen name="Sonidos" component={SoundsScreen} />
         <Stack.Screen name="Biblioteca" component={LibraryScreen} />
@@ -64,6 +69,12 @@ function AppNavigator() {
         <Stack.Screen name="InicioJuego" component={Iniciojuego} />
         <Stack.Screen name="BookReader" component={BookReaderScreens} />
         <Stack.Screen name="Estadisticas" component={EstadisticasScreen} />
+        <Stack.Screen name="RespiracionMenu" component={RespiracionMenu} />
+        <Stack.Screen name="Ejercicio478" component={Ejercicio478} />
+        <Stack.Screen name="Ejercicio555" component={Ejercicio555} />
+        <Stack.Screen name="EjercicioBoxBreathing" component={EjercicioBoxBreathing} />
+        
+        {/* Agrega más pantallas según sea necesario */}
       </Stack.Navigator>
     </NavigationContainer>
   );

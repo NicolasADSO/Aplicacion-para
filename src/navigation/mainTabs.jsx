@@ -1,9 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialIcons } from "@expo/vector-icons";
 
-/**
- * Imports personalizados.
- */
 import { HomeScreen } from "../screens/homeScreen";
 import YogaExercisesScreen from "../screens/yogaExerciseScreen";
 import SoundScreen from "../screens/SoundsScreen";
@@ -14,7 +12,25 @@ import { PulseCameraScreen } from "../screens/pulseCameraScreen";
 import GameListScreen from "../screens/GameListScreen";
 import colors from "../assets/styles/colors";
 
+import { RespiracionMenu } from "../screens/RespiracionMenuScreen";
+import { Ejercicio478 } from "../screens/Ejercicio478";
+import { Ejercicio555 } from "../screens/Ejercicio555";
+import { EjercicioBoxBreathing } from "../screens/EjercicioBoxBreathing";
+
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+function RespiracionStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="RespiracionMenu" component={RespiracionMenu} />
+      <Stack.Screen name="RespiracionScreen" component={RespiracionScreen} />
+      <Stack.Screen name="Ejercicio478" component={Ejercicio478} />
+      <Stack.Screen name="Ejercicio555" component={Ejercicio555} />
+      <Stack.Screen name="EjercicioBoxBreathing" component={EjercicioBoxBreathing} />
+    </Stack.Navigator>
+  );
+}
 
 export const MainTabs = () => {
   return (

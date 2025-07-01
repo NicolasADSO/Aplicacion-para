@@ -9,7 +9,7 @@ const features = [
   {
     title: "Respiracion",
     icon: "air",
-    screen: "Respiracion",
+    screen: "RespiracionMenu",
     color: "#56CCF2",
     description: "Técnicas de calma",
   },

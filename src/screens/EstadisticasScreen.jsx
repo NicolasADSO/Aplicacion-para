@@ -1,7 +1,7 @@
 // EstadisticasScreen.jsx
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
-import { useAuth } from '.././context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import {
   obtenerPuntuacionesMemorama,
   obtenerPuntuacionesRompecabezas,
@@ -122,16 +122,8 @@ export function EstadisticasScreen() {
           data={{
             labels,
             datasets: [
-              {
-                data: puntos,
-                color: () => '#56CCF2',
-                strokeWidth: 2,
-              },
-              {
-                data: tiempos,
-                color: () => '#BB6BD9',
-                strokeWidth: 2,
-              },
+              { data: puntos, color: () => '#56CCF2', strokeWidth: 2 },
+              { data: tiempos, color: () => '#BB6BD9', strokeWidth: 2 },
             ],
           }}
           width={screenWidth}
@@ -145,12 +137,13 @@ export function EstadisticasScreen() {
   };
 
   const crearGraficaRespiracion = (data) => {
-    const labels = data.map((_, i) => `#${i + 1}`);
-    const duraciones = data.map((r) => r.duracion);
+    const ultimas5 = [...data].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
+    const labels = ultimas5.map((_, i) => `#${i + 1}`);
+    const duraciones = ultimas5.map((r) => r.duracion);
 
     return (
       <View style={styles.chartContainer}>
-        <Text style={styles.chartTitle}>Duración de sesiones de respiración</Text>
+        <Text style={styles.chartTitle}>Duración de sesiones de respiración (últimas 5)</Text>
         <LineChart
           data={{
             labels,
@@ -181,14 +174,15 @@ export function EstadisticasScreen() {
         {respiraciones.length === 0 ? (
           <Text style={styles.noData}>No hay sesiones aún.</Text>
         ) : (
-          respiraciones.map((sesion, idx) => (
-            <View key={idx} style={styles.statItem}>
-              <Text style={styles.statValue}>⏱ {sesion.duracion} segundos</Text>
-              <Text style={styles.statDate}>
-                📅 {new Date(sesion.created_at).toLocaleString()}
-              </Text>
-            </View>
-          ))
+          [...respiraciones]
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .slice(0, 5)
+            .map((sesion, idx) => (
+              <View key={idx} style={styles.statItem}>
+                <Text style={styles.statValue}>⏱ {sesion.duracion} segundos</Text>
+                <Text style={styles.statDate}>📅 {new Date(sesion.created_at).toLocaleString()}</Text>
+              </View>
+            ))
         )}
       </View>
 
