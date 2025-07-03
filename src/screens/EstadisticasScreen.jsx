@@ -7,6 +7,7 @@ import {
   obtenerPuntuacionesRompecabezas,
   obtenerPuntuacionesRespiracion,
   obtenerSesionesYoga,
+  obtenerPuntuacionesTapping,
 } from '../services/authService';
 import { LineChart } from 'react-native-chart-kit';
 
@@ -18,6 +19,7 @@ export function EstadisticasScreen() {
   const [rompecabezasData, setRompecabezasData] = useState([]);
   const [respiraciones, setRespiraciones] = useState([]);
   const [yogaSesiones, setYogaSesiones] = useState([]);
+  const [tappingData, setTappingData] = useState([]);
 
   useEffect(() => {
     if (user?.id) {
@@ -30,10 +32,12 @@ export function EstadisticasScreen() {
     const rompe = await obtenerPuntuacionesRompecabezas(user.id);
     const respi = await obtenerPuntuacionesRespiracion(user.id);
     const yoga = await obtenerSesionesYoga(user.id);
+    const tapping = await obtenerPuntuacionesTapping(user.id);
     setMemoramaData(memo);
     setRompecabezasData(rompe);
     setRespiraciones(respi);
     setYogaSesiones(yoga);
+    setTappingData(tapping);
   };
 
   const calcularPromedioSemanal = () => {
@@ -88,32 +92,10 @@ export function EstadisticasScreen() {
     );
   };
 
-  const crearGraficaYogaSesiones = (data) => {
+  const crearGrafica = (data, label, tipo = 'general') => {
     const labels = data.map((_, i) => `#${i + 1}`);
-    const duraciones = data.map((s) => s.duracion);
-
-    return (
-      <View style={styles.chartContainer}>
-        <Text style={styles.chartTitle}>Duración por sesión de Yoga</Text>
-        <LineChart
-          data={{
-            labels,
-            datasets: [{ data: duraciones, color: () => '#F2994A', strokeWidth: 2 }],
-          }}
-          width={screenWidth}
-          height={220}
-          chartConfig={chartConfig}
-          bezier
-          style={styles.chartStyle}
-        />
-      </View>
-    );
-  };
-
-  const crearGrafica = (data, label) => {
-    const labels = data.map((_, i) => `#${i + 1}`);
-    const puntos = data.map((p) => p.puntaje);
-    const tiempos = data.map((p) => p.tiempo_restante);
+    const puntos = data.map((p) => p.puntaje ?? p.puntos);
+    const tiempos = data.map((p) => p.tiempo_restante ?? 0);
 
     return (
       <View style={styles.chartContainer}>
@@ -123,8 +105,8 @@ export function EstadisticasScreen() {
             labels,
             datasets: [
               { data: puntos, color: () => '#56CCF2', strokeWidth: 2 },
-              { data: tiempos, color: () => '#BB6BD9', strokeWidth: 2 },
-            ],
+              tipo !== 'tapping' && { data: tiempos, color: () => '#BB6BD9', strokeWidth: 2 },
+            ].filter(Boolean),
           }}
           width={screenWidth}
           height={220}
@@ -167,7 +149,8 @@ export function EstadisticasScreen() {
       {rompecabezasData.length > 0 && crearGrafica(rompecabezasData, 'Rompecabezas')}
       {respiraciones.length > 0 && crearGraficaRespiracion(respiraciones)}
       {yogaSesiones.length > 0 && renderGraficaYogaSemanal()}
-      {yogaSesiones.length > 0 && crearGraficaYogaSesiones(yogaSesiones)}
+      {yogaSesiones.length > 0 && crearGrafica(yogaSesiones.map((s, i) => ({ puntos: s.duracion })), 'Yoga (sesiones)')}
+      {tappingData.length > 0 && crearGrafica(tappingData, 'Mindful Tapping', 'tapping')}
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🧘 Sesiones de Respiración</Text>

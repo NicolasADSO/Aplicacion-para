@@ -265,5 +265,47 @@ export const obtenerAvatarUsuario = async (userId) => {
   return data?.avatar_uri || null;
 };
 
+//////////////////////////
+// 🎯 TAPPING
+//////////////////////////
+
+export const guardarPuntuacionTapping = async (user_id, puntuacion) => {
+  try {
+    const { error } = await supabase
+      .from("puntuaciones_tapping")
+      .insert([{ ...puntuacion, user_id }]);
+
+    if (error) {
+      console.error("❌ Error al guardar puntuación de tapping:", error.message);
+    } else {
+      console.log("✅ Puntuación de tapping guardada.");
+    }
+  } catch (err) {
+    console.error("❌ Error inesperado al guardar tapping:", err);
+  }
+};
+
+export const obtenerPuntuacionesTapping = async (user_id) => {
+  try {
+    const { data, error } = await supabase
+      .from("puntuaciones_tapping")
+      .select("*")
+      .eq("user_id", user_id)
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    if (error) {
+      console.error("❌ Error al obtener puntuaciones de tapping:", error.message);
+      return [];
+    }
+
+    return data;
+  } catch (err) {
+    console.error("❌ Error inesperado al obtener tapping:", err);
+    return [];
+  }
+};
+
+
 
 

@@ -29,6 +29,7 @@ import {
   obtenerSesionesYoga,
   actualizarAvatarUsuario,
   obtenerAvatarUsuario,
+   obtenerPuntuacionesTapping,  // ✅ la función para traer los datos
 } from '../services/authService';
 
 if (Platform.OS === 'android') {
@@ -56,6 +57,7 @@ export default function ProfileScreen({ navigation }) {
       cargarPuntuacionesRompecabezas();
       cargarPuntuacionesRespiracion();
       cargarSesionesYoga();
+      cargarPuntuacionesTapping();
       cargarAvatar();
     }, [user])
   );
@@ -167,21 +169,113 @@ export default function ProfileScreen({ navigation }) {
     return Math.floor(total / lista.length);
   };
 
+
+  // Función para asignar medallas por juego
+const obtenerMedalla = (juego, valor) => {
+  switch (juego) {
+    case 'memorama':
+      if (valor >= 100) return '🥇 Maestro de Memoria';
+      if (valor >= 50) return '🥈 Cerebro Rápido';
+      if (valor >= 10) return '🥉 Buen Comienzo';
+      break;
+    case 'rompecabezas':
+      if (valor >= 100) return '🥇 Genio de Puzzles';
+      if (valor >= 50) return '🥈 Rompe Piezas';
+      if (valor >= 10) return '🥉 Armador Novato';
+      break;
+    case 'tapping':
+      if (valor >= 25) return '🥇 Reflejos Ninja';
+      if (valor >= 15) return '🥈 Buen Pulso';
+      if (valor >= 8) return '🥉 Tocado y Bien';
+      break;
+    case 'respiracion':
+      if (valor >= 300) return '🥇 Zen Maestro';
+      if (valor >= 150) return '🥈 Respirador Experto';
+      if (valor >= 50) return '🥉 Primeros Respiros';
+      break;
+    case 'yoga':
+      if (valor >= 300) return '🥇 Gurú del Yoga';
+      if (valor >= 150) return '🥈 Postura Perfecta';
+      if (valor >= 50) return '🥉 Yoga Iniciado';
+      break;
+    default:
+      return '';
+  }
+};
+
+const [puntuacionesTapping, setPuntuacionesTapping] = useState([]);
+
   const compartirMejorPuntaje = async () => {
-    const mejorMemorama = Math.max(...puntuacionesMemorama.map(p => p.puntaje));
-    const mejorRompe = Math.max(...puntuacionesRompecabezas.map(p => p.puntaje));
-    const mensaje = `¡Hola! Mi mejor puntaje en Memorama es ${mejorMemorama} y en Rompecabezas es ${mejorRompe}. ¿Puedes superarlo? 🧠🎯`;
-    try {
-      await Share.share({ message: mensaje });
-    } catch (error) {
-      console.error('Error al compartir:', error);
-    }
-  };
+  const mejorMemorama = Math.max(...puntuacionesMemorama.map(p => p.puntaje), 0);
+  const mejorRompe = Math.max(...puntuacionesRompecabezas.map(p => p.puntaje), 0);
+  const mejorTapping = Math.max(...puntuacionesTapping.map(p => p.puntos), 0);
+  const mejorRespiracion = Math.max(...puntuacionesRespiracion.map(p => p.duracion), 0);
+  const mejorYoga = Math.max(...puntuacionesYoga.map(p => p.duracion), 0);
+
+  // Calcular medallas
+const medallaMemo = obtenerMedalla('memorama', mejorMemorama);
+const medallaRompe = obtenerMedalla('rompecabezas', mejorRompe);
+const medallaTapping = obtenerMedalla('tapping', mejorTapping);
+const medallaResp = obtenerMedalla('respiracion', mejorRespiracion);
+const medallaYoga = obtenerMedalla('yoga', mejorYoga);
+
+
+  const mensaje = `
+🎮 ¡Hola! Mira mis mejores logros hasta ahora:
+
+🧩 Memorama: ${mejorMemorama} puntos ${medallaMemo ? `\n   ${medallaMemo}` : ''}
+🧠 Rompecabezas: ${mejorRompe} piezas ${medallaRompe ? `\n   ${medallaRompe}` : ''}
+🎯 Mindful Tapping: ${mejorTapping} aciertos ${medallaTapping ? `\n   ${medallaTapping}` : ''}
+🌬️ Respiración: ${mejorRespiracion} segundos ${medallaResp ? `\n   ${medallaResp}` : ''}
+🧘 Yoga: ${mejorYoga} segundos ${medallaYoga ? `\n   ${medallaYoga}` : ''}
+
+¿Te atreves a superarlos? 💪🔥
+¡Vamos por más! 🚀
+`;
+
+  try {
+    await Share.share({ message: mensaje });
+  } catch (error) {
+    console.error('Error al compartir:', error);
+  }
+};
+
+  const cargarPuntuacionesTapping = async () => {
+  if (!user?.id) return;
+  const resultados = await obtenerPuntuacionesTapping(user.id);
+  setPuntuacionesTapping(resultados);
+};
+  
 
   const promedioMemorama = calcularPromedio(puntuacionesMemorama);
   const promedioRompecabezas = calcularPromedio(puntuacionesRompecabezas);
   const tiempoPromedioMemorama = calcularPromedioTiempo(puntuacionesMemorama);
   const tiempoPromedioRompecabezas = calcularPromedioTiempo(puntuacionesRompecabezas);
+  const medallaMemo = obtenerMedalla('memorama', promedioMemorama);
+  const medallaRompe = obtenerMedalla('rompecabezas', promedioRompecabezas);
+  const medallaTapping = obtenerMedalla('tapping', Math.max(...puntuacionesTapping.map(p => p.puntos), 0));
+  const medallaResp = obtenerMedalla('respiracion', Math.max(...puntuacionesRespiracion.map(p => p.duracion), 0));
+  const medallaYoga = obtenerMedalla('yoga', Math.max(...puntuacionesYoga.map(p => p.duracion), 0));
+
+const [verMasMemo, setVerMasMemo] = useState(false);
+const [verMasRompe, setVerMasRompe] = useState(false);
+const [verMasResp, setVerMasResp] = useState(false);
+const [verMasYoga, setVerMasYoga] = useState(false);
+const [verMasTapping, setVerMasTapping] = useState(false);
+
+
+  const sesiones = {
+  Memorama: puntuacionesMemorama.length,
+  Rompecabezas: puntuacionesRompecabezas.length,
+  Tapping: puntuacionesTapping.length,
+  Respiración: puntuacionesRespiracion.length,
+  Yoga: puntuacionesYoga.length,
+};
+
+const actividadFavorita = Object.entries(sesiones).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Memorama';
+
+const totalSesiones = Object.values(sesiones).reduce((a, b) => a + b, 0);
+
 
   const renderPuntuaciones = (puntuaciones, showAll, toggleShowAll) => (
     <>
@@ -250,21 +344,22 @@ export default function ProfileScreen({ navigation }) {
         {/* Resto del código permanece igual */}
          {/* El resto permanece igual */}
         <BlurView intensity={40} tint="light" style={styles.statsCard}>
-          <View style={styles.statItem}>
-            <MaterialIcons name="check-circle" size={28} color="#56CCF2" />
-            <View style={styles.statTextWrapper}>
-              <Text style={styles.statTitle}>Sesiones completadas</Text>
-              <Text style={styles.statValue}>{puntuacionesMemorama.length + puntuacionesRompecabezas.length}</Text>
-            </View>
-          </View>
-          <View style={styles.statItem}>
-            <MaterialIcons name="self-improvement" size={28} color="#56CCF2" />
-            <View style={styles.statTextWrapper}>
-              <Text style={styles.statTitle}>Actividad favorita</Text>
-              <Text style={styles.statValue}>Memorama</Text>
-            </View>
-          </View>
-        </BlurView>
+  <View style={styles.statItem}>
+    <MaterialIcons name="check-circle" size={28} color="#56CCF2" />
+    <View style={styles.statTextWrapper}>
+      <Text style={styles.statTitle}>Sesiones completadas</Text>
+      <Text style={styles.statValue}>{totalSesiones}</Text>
+    </View>
+  </View>
+  <View style={styles.statItem}>
+    <MaterialIcons name="self-improvement" size={28} color="#56CCF2" />
+    <View style={styles.statTextWrapper}>
+      <Text style={styles.statTitle}>Actividad favorita</Text>
+      <Text style={styles.statValue}>{actividadFavorita}</Text>
+    </View>
+  </View>
+</BlurView>
+
 
         <TouchableOpacity style={styles.shareButton} onPress={compartirMejorPuntaje}>
           <FontAwesome5 name="share-square" size={18} color="#fff" />
@@ -272,54 +367,160 @@ export default function ProfileScreen({ navigation }) {
         </TouchableOpacity>
 
         <View style={styles.scoresCard}>
-          <Text style={styles.sectionTitle}>🧠 Memorama</Text>
-          <Text style={styles.statValue}>Promedio: {promedioMemorama}</Text>
-          {promedioMemorama > 80 && <Text style={styles.mejoradoText}>🎉 ¡Has mejorado tu promedio en Memorama!</Text>}
+        <Text style={styles.sectionTitle}>🧠 Memorama</Text>
+        {medallaMemo && <Text style={styles.medallaTexto}>{medallaMemo}</Text>}
+        <Text style={styles.statValue}>Promedio: {promedioMemorama}</Text>
+        {promedioMemorama > 80 && <Text style={styles.mejoradoText}>🎉 ¡Has mejorado tu promedio en Memorama!</Text>}
           {puntuacionesMemorama.length === 0 ? (
-            <Text style={styles.noScores}>No hay puntuaciones aún.</Text>
+          <Text style={styles.noScores}>No hay puntuaciones aún.</Text>
           ) : (
-            renderPuntuaciones(puntuacionesMemorama, showAllMemorama, () => setShowAllMemorama(!showAllMemorama))
-          )}
-        </View>
+          <>
+          {puntuacionesMemorama
+            .slice(0, verMasMemo ? 3 : 1)
+              .map((p, index) => (
+            <View key={index} style={styles.scoreItem}>
+            <Text style={styles.scoreText}>🎯 Puntaje: {p.puntaje}</Text>
+            <Text style={styles.scoreText}>⏱ Tiempo: {p.tiempo_restante}s</Text>
+            <Text style={styles.scoreDate}>📅 {new Date(p.created_at).toLocaleString()}</Text>
+          </View>
+        ))}
+      {puntuacionesMemorama.length > 1 && (
+        <Text
+          style={styles.verMasBtn}
+          onPress={() => setVerMasMemo(!verMasMemo)}
+        >
+          {verMasMemo ? 'Ocultar' : 'Ver más'}
+        </Text>
+      )}
+    </>
+  )}
+</View>
+
 
         <View style={styles.scoresCard}>
-          <Text style={styles.sectionTitle}>🧩 Rompecabezas</Text>
-          <Text style={styles.statValue}>Promedio: {promedioRompecabezas}</Text>
-          {promedioRompecabezas > 80 && <Text style={styles.mejoradoText}>🎯 ¡Gran progreso en Rompecabezas!</Text>}
-          {puntuacionesRompecabezas.length === 0 ? (
-            <Text style={styles.noScores}>No hay puntuaciones aún.</Text>
-          ) : (
-            renderPuntuaciones(puntuacionesRompecabezas, showAllRompecabezas, () => setShowAllRompecabezas(!showAllRompecabezas))
-          )}
-        </View>
+  <Text style={styles.sectionTitle}>🧩 Rompecabezas</Text>
+  {medallaRompe && <Text style={styles.medallaTexto}>{medallaRompe}</Text>}
+  <Text style={styles.statValue}>Promedio: {promedioRompecabezas}</Text>
+  {promedioRompecabezas > 80 && (
+    <Text style={styles.mejoradoText}>🎯 ¡Gran progreso en Rompecabezas!</Text>
+  )}
+  {puntuacionesRompecabezas.length === 0 ? (
+    <Text style={styles.noScores}>No hay puntuaciones aún.</Text>
+  ) : (
+    <>
+      {puntuacionesRompecabezas
+        .slice(0, verMasRompe ? 3 : 1)
+        .map((p, index) => (
+          <View key={index} style={styles.scoreItem}>
+            <Text style={styles.scoreText}>🧩 Puntaje: {p.puntaje}</Text>
+            <Text style={styles.scoreText}>⏱ Tiempo restante: {p.tiempo_restante}s</Text>
+            <Text style={styles.scoreDate}>📅 {new Date(p.created_at).toLocaleString()}</Text>
+          </View>
+        ))}
+      {puntuacionesRompecabezas.length > 1 && (
+        <Text
+          style={styles.verMasBtn}
+          onPress={() => setVerMasRompe(!verMasRompe)}
+        >
+          {verMasRompe ? 'Ocultar' : 'Ver más'}
+        </Text>
+      )}
+    </>
+  )}
+</View>
+
 
         <View style={styles.scoresCard}>
-          <Text style={styles.sectionTitle}>🌬️ Respiración</Text>
-          {puntuacionesRespiracion.length === 0 ? (
-            <Text style={styles.noScores}>No hay sesiones aún.</Text>
-          ) : (
-            puntuacionesRespiracion.slice(0, 3).map((p, index) => (
-              <View key={index} style={styles.scoreItem}>
-                <Text style={styles.scoreText}>🕒 Duración: {p.duracion} segundos</Text>
-                <Text style={styles.scoreDate}>📅 {new Date(p.created_at).toLocaleString()}</Text>
-              </View>
-            ))
-          )}
-        </View>
+  <Text style={styles.sectionTitle}>🌬️ Respiración</Text>
+  {medallaResp && <Text style={styles.medallaTexto}>{medallaResp}</Text>}
+  {puntuacionesRespiracion.length === 0 ? (
+    <Text style={styles.noScores}>No hay sesiones aún.</Text>
+  ) : (
+    <>
+      {puntuacionesRespiracion
+        .slice(0, verMasResp ? 3 : 1)
+        .map((p, index) => (
+          <View key={index} style={styles.scoreItem}>
+            <Text style={styles.scoreText}>🕒 Duración: {p.duracion} segundos</Text>
+            <Text style={styles.scoreDate}>
+              📅 {new Date(p.created_at).toLocaleString()}
+            </Text>
+          </View>
+        ))}
+      {puntuacionesRespiracion.length > 1 && (
+        <Text
+          style={styles.verMasBtn}
+          onPress={() => setVerMasResp(!verMasResp)}
+        >
+          {verMasResp ? 'Ocultar' : 'Ver más'}
+        </Text>
+      )}
+    </>
+  )}
+</View>
+
 
         <View style={styles.scoresCard}>
-          <Text style={styles.sectionTitle}>🧘 Yoga</Text>
-          {puntuacionesYoga.length === 0 ? (
-            <Text style={styles.noScores}>No hay sesiones aún.</Text>
-          ) : (
-            puntuacionesYoga.slice(0, 3).map((p, index) => (
-              <View key={index} style={styles.scoreItem}>
-                <Text style={styles.scoreText}>🕒 Duración: {p.duracion} segundos</Text>
-                <Text style={styles.scoreDate}>📅 {new Date(p.created_at).toLocaleString()}</Text>
-              </View>
-            ))
-          )}
-        </View>
+  <Text style={styles.sectionTitle}>🧘 Yoga</Text>
+  {medallaYoga && <Text style={styles.medallaTexto}>{medallaYoga}</Text>}
+  {puntuacionesYoga.length === 0 ? (
+    <Text style={styles.noScores}>No hay sesiones aún.</Text>
+  ) : (
+    <>
+      {puntuacionesYoga
+        .slice(0, verMasYoga ? 3 : 1)
+        .map((p, index) => (
+          <View key={index} style={styles.scoreItem}>
+            <Text style={styles.scoreText}>🕒 Duración: {p.duracion} segundos</Text>
+            <Text style={styles.scoreDate}>
+              📅 {new Date(p.created_at).toLocaleString()}
+            </Text>
+          </View>
+        ))}
+      {puntuacionesYoga.length > 1 && (
+        <Text
+          style={styles.verMasBtn}
+          onPress={() => setVerMasYoga(!verMasYoga)}
+        >
+          {verMasYoga ? 'Ocultar' : 'Ver más'}
+        </Text>
+      )}
+    </>
+  )}
+</View>
+
+        <View style={styles.scoresCard}>
+  <Text style={styles.sectionTitle}>🎯 Mindful Tapping</Text>
+  {medallaTapping && <Text style={styles.medallaTexto}>{medallaTapping}</Text>}
+  {puntuacionesTapping.length === 0 ? (
+    <Text style={styles.noScores}>No hay sesiones aún.</Text>
+  ) : (
+    <>
+      {puntuacionesTapping
+        .slice(0, verMasTapping ? 3 : 1)
+        .map((p, index) => (
+          <View key={index} style={styles.scoreItem}>
+            <Text style={styles.scoreText}>🎯 Puntos: {p.puntos}</Text>
+            <Text style={styles.scoreText}>🎮 Modo: {p.modo}</Text>
+            <Text style={styles.scoreText}>🎚 Nivel: {p.nivel}</Text>
+            <Text style={styles.scoreDate}>
+              📅 {new Date(p.created_at).toLocaleString()}
+            </Text>
+          </View>
+        ))}
+      {puntuacionesTapping.length > 1 && (
+        <Text
+          style={styles.verMasBtn}
+          onPress={() => setVerMasTapping(!verMasTapping)}
+        >
+          {verMasTapping ? 'Ocultar' : 'Ver más'}
+        </Text>
+      )}
+    </>
+  )}
+</View>
+
+
 
         <TouchableOpacity style={styles.detailButton} onPress={() => navigation.navigate('Estadisticas')}>
           <MaterialIcons name="bar-chart" size={22} color="#fff" />
@@ -439,6 +640,22 @@ toastText: {
   color: '#fff',
   fontWeight: 'bold',
 },
+medallaTexto: {
+  fontSize: 16,
+  color: '#FFD700',
+  fontWeight: 'bold',
+  textAlign: 'default',
+  marginBottom: 8,
+},
+verMasBtn: {
+  marginTop: 6,
+  fontSize: 14,
+  color: '#4FD1C5',
+  fontWeight: 'bold',
+  textAlign: 'right',
+},
+
+
 });
 
 // ... estilos sin cambios ...

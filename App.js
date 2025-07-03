@@ -16,8 +16,7 @@ import AdminScreen from "./src/screens/adminScreen";
 import { PulseCameraScreen } from "./src/screens/pulseCameraScreen";
 import { GameListScreen } from "./src/screens/GameListScreen";
 import { JuegoMemorama } from "./src/screens/Juegos/JuegoMemorama";
-import { JuegoColorear } from "./src/screens/Juegos/JuegoColorear";
-import { JuegoCírculo } from "./src/screens/Juegos/JuegoCírculo";
+import { JuegoCirculo } from "./src/screens/Juegos/JuegoCírculo";
 import { PuzzleGameScreen } from "./src/screens/Juegos/PuzzleGameScreen";
 import { Iniciojuego } from "./src/screens/Juegos/iniciojuego";
 import BookReaderScreens from "./src/screens/Libros/BookReaderScreen";
@@ -29,7 +28,7 @@ import {RespiracionMenu} from "./src/screens/RespiracionMenuScreen";
 import { Ejercicio478 } from "./src/screens/Ejercicio478";
 import { Ejercicio555 } from "./src/screens/Ejercicio555";
 import { EjercicioBoxBreathing } from "./src/screens/EjercicioBoxBreathing";
-
+import { SeleccionarDibujoScreen } from "./src/screens/SeleccionarDibujoScreen";
 
 const Stack = createStackNavigator();
 
@@ -64,8 +63,7 @@ function AppNavigator() {
         <Stack.Screen name="Rompecabezas" component={PuzzleGameScreen} />
         <Stack.Screen name="ListaDeJuegos" component={GameListScreen} />
         <Stack.Screen name="JuegoMemorama" component={JuegoMemorama} />
-        <Stack.Screen name="JuegoColorear" component={JuegoColorear} />
-        <Stack.Screen name="JuegoCírculo" component={JuegoCírculo} />
+        <Stack.Screen name="JuegoCírculo" component={JuegoCirculo} />
         <Stack.Screen name="InicioJuego" component={Iniciojuego} />
         <Stack.Screen name="BookReader" component={BookReaderScreens} />
         <Stack.Screen name="Estadisticas" component={EstadisticasScreen} />
@@ -73,6 +71,7 @@ function AppNavigator() {
         <Stack.Screen name="Ejercicio478" component={Ejercicio478} />
         <Stack.Screen name="Ejercicio555" component={Ejercicio555} />
         <Stack.Screen name="EjercicioBoxBreathing" component={EjercicioBoxBreathing} />
+        <Stack.Screen name="SeleccionarDibujo" component={SeleccionarDibujoScreen} />
         
         {/* Agrega más pantallas según sea necesario */}
       </Stack.Navigator>

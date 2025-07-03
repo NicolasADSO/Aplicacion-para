@@ -26,7 +26,7 @@ const juegos = [
   {
     title: "Color Zen",
     icon: "palette",
-    screen: "JuegoColorear",
+    screen: "SeleccionarDibujo",
     description: "Colorea mandalas relajantes",
   },
   {
