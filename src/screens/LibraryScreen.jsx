@@ -21,28 +21,34 @@ const books = [
     title: 'El poder del ahora',
     author: 'Eckhart Tolle',
     description: 'Vive el presente y libérate del estrés y ansiedad.',
-    imageUrl: 'https://th.bing.com/th/id/OIP.JOgF3DvfhALeBvDXug2PLQHaHa?w=176&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7',
-    pdfUrl: 'https://training.crecimiento.ws/wp-content/uploads/2020/03/El_Poder_del_Ahora-Eckhart_Tolle.pdf',
+    imageUrl:
+      'https://th.bing.com/th/id/OIP.JOgF3DvfhALeBvDXug2PLQHaHa?w=176&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7',
+    pdfUrl:
+      'https://training.crecimiento.ws/wp-content/uploads/2020/03/El_Poder_del_Ahora-Eckhart_Tolle.pdf',
   },
   {
     title: 'Casi todo es resuelto',
     author: 'Karen Mcdonnell',
     description: 'Técnicas prácticas para dominar la ansiedad cotidiana.',
-    imageUrl: 'https://cdn.bookey.app/files/pdf/book/es/la-teoria-de-casi-todo.pdf',
-    pdfUrl: 'https://cdn.bookey.app/files/pdf/book/es/la-teoria-de-casi-todo.pdf',
+    imageUrl:
+      'https://cdn.bookey.app/files/pdf/book/es/la-teoria-de-casi-todo.pdf',
+    pdfUrl:
+      'https://cdn.bookey.app/files/pdf/book/es/la-teoria-de-casi-todo.pdf',
   },
   {
     title: 'La ansiedad',
     author: 'P. M. Orozco',
     description: 'Aborda tu ansiedad con consciencia y compasión.',
-    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQodmbEQsNdaQI4hrgss7sraJMvFaOAPlh1yw&s',
-    pdfUrl: 'https://elfindelaansiedad.com/wp-content/uploads/2020/04/ElFinDeLaAnsiedadMuestra.pdf',
+    imageUrl:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQodmbEQsNdaQI4hrgss7sraJMvFaOAPlh1yw&s',
+    pdfUrl:
+      'https://elfindelaansiedad.com/wp-content/uploads/2020/04/ElFinDeLaAnsiedadMuestra.pdf',
   },
 ];
 
 export default function LibraryScreen() {
   const [mostrarInfo, setMostrarInfo] = useState(true);
-  const navigation = useNavigation(); // ✅ ahora correctamente dentro del componente
+  const navigation = useNavigation();
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
@@ -54,7 +60,7 @@ export default function LibraryScreen() {
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
-            navigation.navigate("BookReader", {
+            navigation.navigate('BookReader', {
               pdfUrl: item.pdfUrl,
             })
           }
@@ -185,35 +191,35 @@ const styles = StyleSheet.create({
   },
   modalBackground: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.85)",
-    justifyContent: "center",
+    backgroundColor: 'rgba(0,0,0,0.85)',
+    justifyContent: 'center',
     padding: 20,
   },
   modalContent: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 20,
     padding: 20,
-    maxHeight: "80%",
+    maxHeight: '80%',
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   modalText: {
     fontSize: 16,
     marginBottom: 10,
-    color: "#333",
+    color: '#333',
   },
   modalButton: {
-    backgroundColor: "#3A6073",
+    backgroundColor: '#3A6073',
     marginTop: 20,
     padding: 12,
     borderRadius: 10,
   },
   modalButtonText: {
-    color: "#fff",
-    textAlign: "center",
+    color: '#fff',
+    textAlign: 'center',
     fontSize: 16,
   },
 });

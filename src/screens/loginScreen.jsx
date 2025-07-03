@@ -31,7 +31,6 @@ export const LoginScreen = ({ navigation }) => {
     try {
       const userData = await loginUser(email, password);
       await saveUserSession(userData);
-
       navigation.replace("MainTabs");
     } catch (error) {
       alert("Error al iniciar sesión: " + error.message);
@@ -40,7 +39,11 @@ export const LoginScreen = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ImageBackground source={backgroundImage} resizeMode="cover" style={styles.background}>
+      <ImageBackground
+        source={backgroundImage}
+        resizeMode="cover"
+        style={styles.background}
+      >
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -78,7 +81,7 @@ export const LoginScreen = ({ navigation }) => {
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
-            <TouchableOpacity onPress={() => setShowPassword(prev => !prev)}>
+            <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)}>
               <MaterialIcons
                 name={showPassword ? "visibility" : "visibility-off"}
                 size={22}
@@ -89,12 +92,12 @@ export const LoginScreen = ({ navigation }) => {
 
           <Animatable.View animation="fadeInDown" delay={850} style={styles.loginContainer}>
             <TouchableHighlight onPress={handleLogin} style={styles.loginButton}>
-              <Text style={styles.registerText}> Iniciar Sesión </Text>
+              <Text style={styles.loginText}>Iniciar Sesión</Text>
             </TouchableHighlight>
           </Animatable.View>
 
           <Animatable.View animation="fadeInUp" delay={850} style={styles.registerContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.button}>
+            <TouchableOpacity onPress={() => navigation.navigate("Register")}>
               <Text style={styles.registerText}>
                 ¿No tienes una cuenta? <Text style={styles.link}>Regístrate</Text>
               </Text>
@@ -109,7 +112,6 @@ export const LoginScreen = ({ navigation }) => {
     </TouchableWithoutFeedback>
   );
 };
-
 
 const styles = StyleSheet.create({
   background: {
@@ -149,12 +151,15 @@ const styles = StyleSheet.create({
     color: "#1a1a1a",
     fontSize: 16,
   },
+  loginContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
   loginButton: {
     backgroundColor: "#ffffffcc",
     paddingVertical: 14,
     borderRadius: 14,
-    width: "200",
-    height: "auto",
+    width: 200,
     alignItems: "center",
     marginTop: 10,
   },

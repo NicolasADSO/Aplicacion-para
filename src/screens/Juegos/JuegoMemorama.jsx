@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,9 @@ import {
   FlatList,
   Dimensions,
   Alert,
+  TouchableOpacity,
+  Modal,
+  Pressable,
 } from "react-native";
 import { CartaMemorama } from "../Juegos/CartaMemorama";
 
@@ -24,7 +27,8 @@ export const JuegoMemorama = () => {
   const [seleccionadas, setSeleccionadas] = useState([]);
 
   useEffect(() => {
-    setCartas(generarCartas());
+    iniciarJuego(dificultad);
+    return () => clearInterval(timerRef.current);
   }, []);
 
   const manejarToque = (id) => {
@@ -41,22 +45,20 @@ export const JuegoMemorama = () => {
     if (nuevasSeleccionadas.length === 2) {
       const [i1, i2] = nuevasSeleccionadas;
       if (cartas[i1].emoji === cartas[i2].emoji) {
-        // ¡Correcto!
         nuevasCartas[i1].resuelta = true;
         nuevasCartas[i2].resuelta = true;
         setCartas([...nuevasCartas]);
       }
 
       setTimeout(() => {
-        const reinicio = nuevasCartas.map((c, idx) =>
+        const reinicio = nuevasCartas.map((c) =>
           c.resuelta ? c : { ...c, volteada: false }
         );
         setCartas(reinicio);
         setSeleccionadas([]);
-      }, 800);
+      }, 700);
     }
 
-    // ¿Juego terminado?
     const terminado = nuevasCartas.every((c) => c.resuelta);
     if (terminado) {
       setTimeout(() => {
@@ -79,7 +81,7 @@ export const JuegoMemorama = () => {
       <FlatList
         data={cartas}
         keyExtractor={(item) => item.id}
-        numColumns={3}
+        numColumns={4}
         renderItem={({ item }) => (
           <CartaMemorama carta={item} onPress={() => manejarToque(item.id)} />
         )}
@@ -87,7 +89,7 @@ export const JuegoMemorama = () => {
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 40, backgroundColor: "#121212" },

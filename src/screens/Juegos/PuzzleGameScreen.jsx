@@ -133,14 +133,13 @@ const getPieces = (puzzleId, gridSize) => {
   return pieces[puzzleId]?.[gridSize] || [];
 };
 
-
 export const PuzzleGameScreen = () => {
   const route = useRoute();
   const puzzleId = route.params?.puzzleId || "paisaje";
   const gridSize = route.params?.gridSize || 3;
 
   const cellSize = Math.floor(boardSize / gridSize);
-  const piezas = getPieces(puzzleId, gridSize);
+  const piezas = getPieces(puzzleId.toLowerCase?.(), gridSize);
 
   const [tablero, setTablero] = useState(Array(gridSize * gridSize).fill(null));
   const [fichasDisponibles, setFichasDisponibles] = useState([]);
@@ -150,6 +149,8 @@ export const PuzzleGameScreen = () => {
   const [isDark, setIsDark] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const { user } = useAuth();
 
   useEffect(() => {
     reiniciar();
@@ -202,14 +203,22 @@ export const PuzzleGameScreen = () => {
 
     if (nuevoTablero.every((ficha, i) => ficha && ficha.id === i)) {
       const puntuacion = Math.max(1000 - elapsed * 10, 100);
-      Alert.alert("🎉 ¡Excelente!",
-        `Has completado el puzzle.\nTiempo: ${elapsed} s\nPuntuación: ${puntuacion}`
-      );
+      Alert.alert("🎉 ¡Excelente!", `Has completado el puzzle.\nTiempo: ${elapsed} s\nPuntuación: ${puntuacion}`);
+
+      if (user?.id) {
+        const dificultadTexto = gridSize === 3 ? "fácil" : gridSize === 4 ? "media" : "difícil";
+        guardarPuntuacionRompecabezas(user.id, {
+          dificultad: dificultadTexto,
+          puntaje: puntuacion,
+          tiempo_restante: 0,
+        });
+      } else {
+        console.warn("⚠️ No se pudo guardar: el usuario no está autenticado.");
+      }
     }
   };
 
   const completadas = tablero.filter((ficha, i) => ficha?.id === i).length;
-
   const theme = isDark ? darkTheme : lightTheme;
 
   return (
@@ -228,18 +237,14 @@ export const PuzzleGameScreen = () => {
         {tablero.map((ficha, i) => (
           <TouchableOpacity
             key={i}
-            style={[
-    {
-    width: cellSize,
-    height: cellSize,
-    borderWidth: 1,
-    borderColor: "#B0BEC5",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  ficha?.id === i && styles.correctCell
-]}
-
+            style={[{
+              width: cellSize,
+              height: cellSize,
+              borderWidth: 1,
+              borderColor: "#B0BEC5",
+              justifyContent: "center",
+              alignItems: "center"
+            }, ficha?.id === i && styles.correctCell]}
             onPress={() => colocarFicha(i)}
           >
             {ficha && (
@@ -257,10 +262,7 @@ export const PuzzleGameScreen = () => {
         {fichasDisponibles.map((ficha) => (
           <TouchableOpacity
             key={ficha.id}
-            style={[
-              styles.pieceButton,
-              seleccionada?.id === ficha.id && { borderColor: "#2196F3", borderWidth: 2 },
-            ]}
+            style={[styles.pieceButton, seleccionada?.id === ficha.id && { borderColor: "#2196F3", borderWidth: 2 }]}
             onPress={() => setSeleccionada(seleccionada?.id === ficha.id ? null : ficha)}
           >
             <Image source={ficha.img} style={styles.image} />
@@ -309,11 +311,6 @@ const styles = StyleSheet.create({
   progress: { fontSize: 13, marginBottom: 10 },
   subtitle: { fontSize: 14, fontWeight: "600", marginTop: 24, marginBottom: 8 },
   grid: { flexDirection: "row", flexWrap: "wrap", borderRadius: 12, overflow: "hidden" },
-  cell: {
-    width: boardSize / 3, height: boardSize / 3,
-    borderWidth: 1, borderColor: "#B0BEC5",
-    justifyContent: "center", alignItems: "center"
-  },
   correctCell: {
     borderColor: "#4CAF50",
     shadowColor: "#4CAF50",

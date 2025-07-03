@@ -1,0 +1,18 @@
+
+import React from "react";
+import Svg, { Path } from "react-native-svg";
+
+// Este componente acepta props como zona1={ fill: "#f00", onPress: () => ... }
+const MandalaInteractiva = ({ zona1, zona2, zona3, zona4, zona5, zona6, zona7 }) => (
+  <Svg width={300} height={300} viewBox="0 0 300 300">
+    <Path d="M150 130 a20 20 0 1 0 0.00001 0" {...zona1} />
+    <Path d="M150 130 L170 100 A40 40 0 0 1 190 130 Z" {...zona2} />
+    <Path d="M150 130 L130 100 A40 40 0 0 0 110 130 Z" {...zona3} />
+    <Path d="M150 130 L180 160 A40 40 0 0 1 150 190 Z" {...zona4} />
+    <Path d="M150 130 L120 160 A40 40 0 0 0 150 190 Z" {...zona5} />
+    <Path d="M150 130 L150 90 A40 40 0 0 1 150 130 Z" {...zona6} />
+    <Path d="M150 130 L150 170 A40 40 0 0 0 150 130 Z" {...zona7} />
+  </Svg>
+);
+
+export default MandalaInteractiva;

@@ -17,26 +17,26 @@ const puzzles = [
     preview: require("../../assets/images/paisaje-preview.jpg"),
   },
   {
-    id: "perro",
-    title: "Perro",
-    preview: require("../../assets/images/preview.jpg"),
+    id: "paisaje2",
+    title: "montañas",
+    preview: require("../../assets/images/paisajeNat.jpg"),
   },
   {
-    id: "bosque",
-    title: "Bosque",
-    preview: require("../../assets/images/preview.jpg"),
+    id: "vaca",
+    title: "Vaca",
+    preview: require("../../assets/images/vaca.jpg"),
   },
 ];
 
 const difficulties = [
   { label: "Fácil (3x3)", value: 3 },
   { label: "Media (4x4)", value: 4 },
-  { label: "Difícil (5x5)", value: 5 },
   { label: "Experto (6x6)", value: 6 },
 ];
 
 const { width } = Dimensions.get("window");
-const previewSize = width / 3.2;
+const cardWidth = width / 3.2;
+const cardHeight = cardWidth + 20;
 
 export const Iniciojuego = () => {
   const navigation = useNavigation();
@@ -111,21 +111,35 @@ const styles = StyleSheet.create({
     color: "#263238",
   },
   gallery: {
-    paddingBottom: 12,
+    paddingBottom: 4,
+    paddingLeft: 4,
+    marginBottom: 8,
+    alignItems: "flex-start", // evita espacio innecesario
   },
   previewBox: {
+    width: cardWidth,
+    height: cardHeight,
     marginRight: 12,
     alignItems: "center",
+    backgroundColor: "#ECEFF1",
+    borderRadius: 16,
+    padding: 8,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
   },
   selectedBox: {
     borderWidth: 2,
     borderColor: "#1976D2",
-    borderRadius: 12,
   },
   image: {
-    width: previewSize,
-    height: previewSize,
+    width: "100%",
+    height: cardWidth,
     borderRadius: 10,
+    resizeMode: "cover",
+    backgroundColor: "#ccc",
   },
   imageLabel: {
     marginTop: 6,
@@ -133,7 +147,7 @@ const styles = StyleSheet.create({
     color: "#455A64",
   },
   difficultyContainer: {
-    marginTop: 10,
+    marginTop: 8,
   },
   diffButton: {
     paddingVertical: 10,
