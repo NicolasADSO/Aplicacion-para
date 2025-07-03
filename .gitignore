@@ -3,6 +3,8 @@
 # dependencies
 node_modules/
 
+src/assets/images/bg-music.opdownload
+
 # Expo
 .expo/
 dist/
