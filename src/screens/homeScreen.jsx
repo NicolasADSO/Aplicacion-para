@@ -105,8 +105,6 @@ export const HomeScreen = ({ navigation }) => {
           currentBPM={currentBPM}
         />
 
-        {/* Progreso diario */}
-        <StatsSection stats={dailyStats} />
 
         {/* Acciones rápidas */}
         <View style={styles.quickSection}>
