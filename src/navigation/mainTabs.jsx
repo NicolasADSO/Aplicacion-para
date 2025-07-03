@@ -3,13 +3,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { HomeScreen } from "../screens/homeScreen";
-import YogaExercisesScreen from "../screens/yogaExerciseScreen";
-import SoundScreen from "../screens/SoundsScreen";
-import RespiracionScreen from "../screens/respiracionScreen";
-import LibraryScreen from "../screens/LibraryScreen";
 import ProfileScreen from "../screens/profileScreen";
-import { PulseCameraScreen } from "../screens/pulseCameraScreen";
-import GameListScreen from "../screens/GameListScreen";
+import {PulseCameraScreen} from "../screens/pulseCameraScreen";
 import colors from "../assets/styles/colors";
 
 import { RespiracionMenu } from "../screens/RespiracionMenuScreen";
