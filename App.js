@@ -13,12 +13,11 @@ import { MainTabs } from "./src/navigation/mainTabs";
 import RespiracionScreen from "./src/screens/respiracionScreen";
 import ProfileScreen from "./src/screens/profileScreen";
 import AdminScreen from "./src/screens/adminScreen";
-<<<<<<< HEAD
 import { PulseCameraScreen } from "./src/screens/pulseCameraScreen";
-=======
+
 import { HeartRateProvider } from "./src/context/HeartRateContext";
 import {PulseCameraScreen} from "./src/screens/pulseCameraScreen";
->>>>>>> bdad5bd6c90b0c71de4a1ecd9047cf25d5cedd0d
+
 import { GameListScreen } from "./src/screens/GameListScreen";
 import { JuegoMemorama } from "./src/screens/Juegos/JuegoMemorama";
 import { JuegoCirculo } from "./src/screens/Juegos/JuegoCírculo";
