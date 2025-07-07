@@ -6,7 +6,6 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
-  TouchableOpacity,
   Modal,
   Pressable,
 } from "react-native";
