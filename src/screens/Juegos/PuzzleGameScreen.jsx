@@ -41,7 +41,7 @@ export const PuzzleGameScreen = () => {
   const gridSize = route.params?.gridSize || 3;
 
   const cellSize = Math.floor(boardSize / gridSize);
-  const piezas = getPieces(puzzleId, gridSize);
+  const piezas = getPieces(puzzleId.toLowerCase?.(), gridSize);
 
   const [tablero, setTablero] = useState(Array(gridSize * gridSize).fill(null));
   const [fichasDisponibles, setFichasDisponibles] = useState([]);
@@ -121,7 +121,6 @@ export const PuzzleGameScreen = () => {
   };
 
   const completadas = tablero.filter((ficha, i) => ficha?.id === i).length;
-
   const theme = isDark ? darkTheme : lightTheme;
 
   return (

@@ -1,20 +1,22 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Image,
   TouchableOpacity,
+  Dimensions,
   ScrollView,
+  Platform,
   LayoutAnimation,
   UIManager,
-  Platform,
+  Alert,
   Share,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext'
 import { BlurView } from 'expo-blur';
+import { useAuth } from '../context/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   obtenerPuntuacionesMemorama,
@@ -24,8 +26,11 @@ import {
 } from '../services/authService';
 
 if (Platform.OS === 'android') {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
+  UIManager.setLayoutAnimationEnabledExperimental &&
+    UIManager.setLayoutAnimationEnabledExperimental(true);
 }
+
+const { width } = Dimensions.get('window');
 
 export default function ProfileScreen({ navigation }) {
   const { user } = useAuth();
@@ -106,6 +111,19 @@ export default function ProfileScreen({ navigation }) {
       )}
     </>
   );
+
+  const handleLogout = () => {
+    Alert.alert("Cerrar Sesión", "¿Estás seguro de que quieres cerrar sesión?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Cerrar Sesión",
+        style: "destructive",
+        onPress: async () => {
+          navigation.replace("Login");
+        },
+      },
+    ]);
+  };
 
   return (
     <LinearGradient colors={['#141E30', '#243B55']} style={styles.container}>
@@ -193,7 +211,7 @@ export default function ProfileScreen({ navigation }) {
           <Text style={styles.logoutText}>Ver estadísticas detalladas</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.logoutButton} onPress={() => navigation.replace('Login')}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <MaterialIcons name="logout" size={22} color="#fff" />
           <Text style={styles.logoutText}>Cerrar sesión</Text>
         </TouchableOpacity>

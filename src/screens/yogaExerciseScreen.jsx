@@ -154,6 +154,8 @@ export default function YogaExerciseScreen() {
           <Text style={styles.buttonText}>Siguiente</Text>
         </TouchableOpacity>
       </Animated.View>
+
+      <FloatingProfileButton />
     </LinearGradient>
   );
 }
@@ -237,3 +239,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+

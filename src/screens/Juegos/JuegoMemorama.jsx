@@ -6,6 +6,9 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  TouchableOpacity,
+  Modal,
+  Pressable,
 } from "react-native";
 import { CartaMemorama } from "./CartaMemorama";
 import { useAuth } from "../../context/AuthContext";
@@ -101,7 +104,7 @@ export function JuegoMemorama() {
       }
 
       setTimeout(() => {
-        const reinicio = nuevasCartas.map((c, idx) =>
+        const reinicio = nuevasCartas.map((c) =>
           c.resuelta ? c : { ...c, volteada: false }
         );
         setCartas(reinicio);
@@ -159,7 +162,7 @@ export function JuegoMemorama() {
       <FlatList
         data={cartas}
         keyExtractor={(item) => item.id}
-        numColumns={3}
+        numColumns={4}
         renderItem={({ item }) => (
           <CartaMemorama carta={item} onPress={() => manejarToque(item.id)} />
         )}

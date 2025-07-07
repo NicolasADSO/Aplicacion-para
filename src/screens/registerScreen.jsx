@@ -5,193 +5,263 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
   StatusBar,
+  ImageBackground,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
 
 import colors from "../assets/styles/colors";
 import { registerUser } from "../services/authService";
+import backgroundImage from "../assets/images/fondo-login.jpg"; // usa la misma que login
 
 export const RegisterScreen = ({ navigation }) => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [passwordCriteria, setPasswordCriteria] = useState({
+    length: false,
+    upper: false,
+    lower: false,
+    number: false,
+    special: false,
+  });
+
+  const validatePassword = (text) => {
+    setPasswordCriteria({
+      length: text.length >= 8,
+      upper: /[A-Z]/.test(text),
+      lower: /[a-z]/.test(text),
+      number: /\d/.test(text),
+      special: /[@$!%*?&_\-#]/.test(text),
+    });
+  };
 
   const handleRegister = async () => {
     if (!userName || !email || !password) {
-      Alert.alert("Campos requeridos", "Todos los campos son obligatorios.");
+      setErrorMessage("Todos los campos son obligatorios.");
+      return;
+    }
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_\-#])[A-Za-z\d@$!%*?&_\-#]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      setErrorMessage("La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y un carácter especial.");
       return;
     }
 
     try {
       await registerUser(userName, email, password);
-      Alert.alert(
-        "Registro exitoso",
-        "Revisa tu correo para verificar tu cuenta."
-      );
+      setErrorMessage("");
       navigation.navigate("Login");
     } catch (error) {
-      console.error("Error al registrar usuario:", error);
-      Alert.alert(
-        "Error",
-        error.message || "No se pudo completar el registro."
-      );
+      const message =
+        error.message?.includes("already registered") ||
+        error.message?.includes("email") ||
+        error.message?.includes("exists")
+          ? "Este correo ya está registrado."
+          : "No se pudo completar el registro.";
+      setErrorMessage(message);
     }
   };
 
   return (
-    <LinearGradient colors={["#2C3E50", "#1c2833"]} style={styles.gradient}>
-      <StatusBar barStyle="light-content" />
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
-          <Animatable.View
-            style={styles.card}
-            animation="fadeInUp"
-            duration={1000}
-          >
-            <MaterialIcons
-              name="person-add"
-              size={44}
-              color="#fff"
-              style={{ marginBottom: 15 }}
-            />
-            <Text style={styles.title}>Crea tu cuenta</Text>
+          <StatusBar barStyle="dark-content" />
+          <Animatable.Text animation="fadeInDown" delay={200} style={styles.header}>
+            ¡Regístrate!
+          </Animatable.Text>
+          <Animatable.Text animation="fadeInDown" delay={400} style={styles.subtext}>
+            Crea tu cuenta para comenzar 🌟
+          </Animatable.Text>
 
+          <Animatable.View animation="fadeInDown" delay={600} style={styles.inputContainer}>
+            <MaterialIcons name="person" size={20} color="#1a1a1a" style={styles.icon} />
             <TextInput
-              style={styles.input}
               placeholder="Nombre de usuario"
-              placeholderTextColor="#bbb"
-              value={userName}
-              onChangeText={setUserName}
-            />
-
-            <TextInput
+              placeholderTextColor="#555"
               style={styles.input}
-              placeholder="Ingresa tu correo electrónico"
-              placeholderTextColor="#bbb"
+              value={userName}
+              onChangeText={(text) => {
+                setUserName(text);
+                setErrorMessage("");
+              }}
+            />
+          </Animatable.View>
+
+          <Animatable.View animation="fadeInDown" delay={700} style={styles.inputContainer}>
+            <MaterialIcons name="email" size={20} color="#1a1a1a" style={styles.icon} />
+            <TextInput
+              placeholder="Correo electrónico"
+              placeholderTextColor="#555"
+              style={styles.input}
               value={email}
-              onChangeText={setEmail}
+              onChangeText={(text) => {
+                setEmail(text);
+                setErrorMessage("");
+              }}
               keyboardType="email-address"
               autoCapitalize="none"
             />
+          </Animatable.View>
 
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="Escribe tu contraseña"
-                placeholderTextColor="#bbb"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
+          <Animatable.View animation="fadeInDown" delay={800} style={styles.inputContainer}>
+            <MaterialIcons name="lock" size={20} color="#1a1a1a" style={styles.icon} />
+            <TextInput
+              placeholder="Contraseña"
+              placeholderTextColor="#555"
+              style={styles.input}
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                validatePassword(text);
+                setErrorMessage("");
+              }}
+              onFocus={() => setPasswordFocused(true)}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <MaterialIcons
+                name={showPassword ? "visibility" : "visibility-off"}
+                size={22}
+                color="#1a1a1a"
               />
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-                style={styles.eyeIcon}
-              >
-                <MaterialIcons
-                  name={showPassword ? "visibility" : "visibility-off"}
-                  size={22}
-                  color="#ccc"
-                />
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity onPress={handleRegister} style={styles.button}>
-              <Text style={styles.buttonText}>Registrarse</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-              <Text style={styles.footerText}>
-                ¿Ya tienes una cuenta? Inicia sesión
-              </Text>
             </TouchableOpacity>
           </Animatable.View>
+
+          {passwordFocused && (
+            <View style={styles.criteriaContainer}>
+              <Text style={{ color: passwordCriteria.length ? "green" : "#444" }}>
+                • Al menos 8 caracteres
+              </Text>
+              <Text style={{ color: passwordCriteria.upper ? "green" : "#444" }}>
+                • Una letra mayúscula
+              </Text>
+              <Text style={{ color: passwordCriteria.lower ? "green" : "#444" }}>
+                • Una letra minúscula
+              </Text>
+              <Text style={{ color: passwordCriteria.number ? "green" : "#444" }}>
+                • Un número
+              </Text>
+              <Text style={{ color: passwordCriteria.special ? "green" : "#444" }}>
+                • Un carácter especial (@$!%*?&_-#)
+              </Text>
+            </View>
+          )}
+
+          <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
+            <Text style={styles.registerText}>Registrarse</Text>
+          </TouchableOpacity>
+
+          {errorMessage !== "" && (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          )}
+
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Text style={styles.loginRedirect}>
+              ¿Ya tienes una cuenta? <Text style={styles.link}>Inicia sesión</Text>
+            </Text>
+          </TouchableOpacity>
+
+          <Animatable.Text animation="fadeInUp" delay={1000} style={styles.footer}>
+            Te damos la bienvenida a la app 🧘‍♂️
+          </Animatable.Text>
         </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
-    </LinearGradient>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
-  gradient: { flex: 1 },
-  container: { flex: 1, justifyContent: "center", paddingHorizontal: 24 },
-  card: {
-    backgroundColor: "#ffffff0f",
-    padding: 28,
-    borderRadius: 20,
+  background: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  container: {
+    paddingHorizontal: 30,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 10,
   },
-  title: { fontSize: 26, fontWeight: "bold", color: "#fff", marginBottom: 20 },
-  input: {
-    width: 280,
-    height: 50,
-    backgroundColor: "#ffffff1c",
-    borderRadius: 12,
-    paddingHorizontal: 15,
+  header: {
+    fontSize: 32,
+    color: "#1a1a1a",
+    fontWeight: "bold",
+    marginBottom: 6,
+  },
+  subtext: {
     color: "#fff",
-    marginBottom: 15,
-    borderWidth: 0.5,
-    borderColor: "#ffffff33",
+    fontSize: 16,
+    marginBottom: 30,
   },
-
-  passwordContainer: {
+  inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    width: 280,
-    height: 50,
-    backgroundColor: "#ffffff1c",
+    backgroundColor: "#ffffffcc",
     borderRadius: 12,
-    borderWidth: 0.5,
-    borderColor: "#ffffff33",
-    paddingHorizontal: 10,
     marginBottom: 15,
-  },
-
-  passwordInput: {
-    flex: 1,
-    color: "#fff",
-    fontSize: 16,
-    backgroundColor: "transparent", // sin fondo duplicado
+    width: "100%",
     paddingHorizontal: 10,
   },
-
-  eyeIcon: {
-    padding: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: "auto", // lo empuja al borde derecho
+  icon: {
+    marginRight: 8,
   },
-  button: {
-    backgroundColor: colors.secondary,
+  input: {
+    flex: 1,
+    height: 50,
+    color: "#1a1a1a",
+    fontSize: 16,
+  },
+  criteriaContainer: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  registerButton: {
+    backgroundColor: "#ffffffcc",
     paddingVertical: 14,
     borderRadius: 14,
-    marginTop: 10,
     width: 200,
+    alignItems: "center",
+    marginTop: 10,
   },
-  buttonText: {
-    color: "#fff",
+  registerText: {
+    color: "#1a1a1a",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  loginRedirect: {
+    marginTop: 18,
+    color: "#000",
+    fontSize: 14,
+  },
+  link: {
+    fontWeight: "bold",
+  },
+  footer: {
+    marginTop: 40,
+    fontSize: 13,
+    color: "#555",
+    fontStyle: "italic",
     textAlign: "center",
   },
-  footerText: {
-    color: "#ccc",
-    marginTop: 20,
+  errorText: {
+    color: "#ff4d4d",
+    fontSize: 14,
+    marginTop: 10,
+    textAlign: "center",
     fontStyle: "italic",
   },
 });
