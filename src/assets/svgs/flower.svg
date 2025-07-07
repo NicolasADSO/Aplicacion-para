@@ -1,0 +1,6 @@
+<!-- flower.svg -->
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <circle id="zona1" cx="150" cy="100" r="40" fill="#ccc"/>
+  <rect id="zona2" x="90" y="180" width="40" height="40" fill="#ccc"/>
+  <rect id="zona3" x="170" y="180" width="40" height="40" fill="#ccc"/>
+</svg>
