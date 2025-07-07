@@ -15,9 +15,6 @@ import ProfileScreen from "./src/screens/profileScreen";
 import AdminScreen from "./src/screens/adminScreen";
 import { PulseCameraScreen } from "./src/screens/pulseCameraScreen";
 
-import { HeartRateProvider } from "./src/context/HeartRateContext";
-import {PulseCameraScreen} from "./src/screens/pulseCameraScreen";
-
 import { GameListScreen } from "./src/screens/GameListScreen";
 import { JuegoMemorama } from "./src/screens/Juegos/JuegoMemorama";
 import { JuegoCirculo } from "./src/screens/Juegos/JuegoCírculo";
