@@ -6,6 +6,8 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Modal,
+  Pressable,
 } from "react-native";
 import { CartaMemorama } from "./CartaMemorama";
 import { useAuth } from "../../context/AuthContext";

@@ -14,7 +14,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
-import FloatingProfileButton from '../components/FloatingProfileButton';
 import { useAuth } from '.././context/AuthContext';
 import { guardarPuntuacionYoga } from '.././services/authService';
 
@@ -156,7 +155,6 @@ export default function YogaExerciseScreen() {
         </TouchableOpacity>
       </Animated.View>
 
-      <FloatingProfileButton />
     </LinearGradient>
   );
 }
@@ -240,3 +238,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+

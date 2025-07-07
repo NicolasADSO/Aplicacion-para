@@ -1,5 +1,3 @@
-// ✅ Versión con selección de avatar desde galería de avatares predefinidos + opción de cambiar avatar
-
 import React, { useState, useCallback } from 'react';
 import {
   View,
@@ -7,18 +5,18 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Dimensions,
   ScrollView,
+  Platform,
   LayoutAnimation,
   UIManager,
-  Platform,
+  Alert,
   Share,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext';
 import { BlurView } from 'expo-blur';
-import { FlatList } from 'react-native';
-import { avatarMap } from '../context/avatarMap';
+import { useAuth } from '../context/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -33,10 +31,11 @@ import {
 } from '../services/authService';
 
 if (Platform.OS === 'android') {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
+  UIManager.setLayoutAnimationEnabledExperimental &&
+    UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const avatarList = Object.entries(avatarMap);
+const { width } = Dimensions.get('window');
 
 export default function ProfileScreen({ navigation }) {
   const { user, setUser } = useAuth();
@@ -295,6 +294,19 @@ const totalSesiones = Object.values(sesiones).reduce((a, b) => a + b, 0);
     </>
   );
 
+  const handleLogout = () => {
+    Alert.alert("Cerrar Sesión", "¿Estás seguro de que quieres cerrar sesión?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Cerrar Sesión",
+        style: "destructive",
+        onPress: async () => {
+          navigation.replace("Login");
+        },
+      },
+    ]);
+  };
+
   return (
     <LinearGradient colors={['#141E30', '#243B55']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -527,7 +539,7 @@ const totalSesiones = Object.values(sesiones).reduce((a, b) => a + b, 0);
           <Text style={styles.logoutText}>Ver estadísticas detalladas</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.logoutButton} onPress={() => navigation.replace('Login')}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <MaterialIcons name="logout" size={22} color="#fff" />
           <Text style={styles.logoutText}>Cerrar sesión</Text>
         </TouchableOpacity>
