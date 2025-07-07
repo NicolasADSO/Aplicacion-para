@@ -155,7 +155,6 @@ export default function YogaExerciseScreen() {
         </TouchableOpacity>
       </Animated.View>
 
-      <FloatingProfileButton />
     </LinearGradient>
   );
 }
